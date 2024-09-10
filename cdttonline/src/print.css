@@ -1,0 +1,93 @@
+
+/** This script will be accessed when the user selects the print button, 
+    located on the Test Results modal. */
+@media print {
+
+    body, head {
+        visibility: hidden;
+    }
+    
+    head, .CDTTtest {
+        display: none;
+    }
+
+    /* Do not display the following elements */
+    .printBtn, 
+    .close, 
+    .saveResultsQ, 
+    .textArea, 
+    .results.comments, 
+    .pNoteSaveResults, 
+    .submitResultsBtn, 
+    .CDTTtest, 
+    br, 
+    .termsAndConditions, 
+    .maxSizeTextArea, 
+    .allowSaveExtraSection, 
+    .showDetailedResults {
+        display: none !important;
+        overflow: hidden !important;
+        visibility: hidden !important;
+    }
+
+    /* All modal elements displayed */
+    .modal *:not([style*="display='none'"]) {
+        overflow: visible !important;
+    }
+
+    .modal {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+    }
+
+    section {
+        width: 100%;
+    }
+
+    fieldset {
+        border: 0px;
+        margin: 0px;
+        width: 100%;
+    }
+
+    fieldset legend {
+        display: none;
+    }
+    
+    /* Show Results */
+    #showResultsContainer, .dataModal {
+        z-index: 1;
+        width: 100%;
+        visibility:visible !important;
+        margin: 0px;
+        margin-bottom: 2px;
+        margin-top: 2px;
+        padding: 0px;
+        position: absolute;
+    }
+
+
+    .results {
+        padding: 5px;
+        margin: 2px;
+    }   
+    
+    .adaptiveResults {
+        border: 0px;
+    }
+
+    th.results {
+        padding: 0px;
+        margin: 0px;
+    }
+
+    hr {
+        margin-bottom: 0px;
+    }
+
+    h1 {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }  
+}

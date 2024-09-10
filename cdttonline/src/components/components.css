@@ -1,0 +1,765 @@
+/* CSS */
+
+
+
+/***********************
+GENERAL
+************************/
+html {
+    scroll-behavior: smooth;
+}
+
+/* Header */ 
+.header {
+    padding: 80px;
+    text-align: center;
+    background: #b2b2b2;
+    color: rgb(0, 0, 0);
+}
+
+/* Table, row and column */
+table, th, td{
+    text-align: left;
+    font-size: 14px;   
+}
+
+/* Loading CDTT test button */
+.main {   
+    flex: 70%;
+    background-color: white;
+    padding: 20px;
+}
+
+fieldset {
+    padding: 5px;
+    margin:10px
+}
+
+table {
+    width: 100%;
+}
+
+button {
+    background-color: rgb(255, 255, 255);
+    border: .5px solid #d3d3d3;
+    border-radius: 2px;
+    color: black;
+    padding: 5px 15px 5px;
+    margin: 5px;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+}
+
+/* Button hovered and enabled */
+button:hover:enabled {
+    background-color: #aaaaaa;
+    cursor: pointer;
+}
+
+/* Button disabled */
+button:disabled {
+    background-color:#f1f1f1 ;
+    color: #aaaaaa;
+}
+
+p {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h5 {
+    margin: 0px;
+    padding: 5px;
+    text-align: left;
+}
+
+/* Style the horizontal ruler */
+hr {
+    border: 1px solid #f1f1f1;
+    margin-bottom: 25px;
+}
+
+legend {
+    float: revert;
+    width: revert;
+    padding: revert;
+    margin-bottom: revert;
+    font-size: calc(1.275rem + .3vw);
+    line-height: inherit;
+}
+
+fieldset {
+    min-width: 0;
+    /* padding: 0; */
+    /* margin: 0; */
+    border: revert !important;
+}
+
+
+/***********************************************
+TEST PARAMETERS AND INTERNAL CALIBRATION FRAMES
+************************************************/
+.CDTTtest{
+    border: 1px solid #d3d3d3;
+    background-color: #f1f1f1;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 600px;
+}
+
+/* Slider Range for Masker and Starting SNR */
+#volumeRangeMasker, #startingSNRrange {
+    height: 10px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.testParametersTable td, .calibrationParametersTable td {
+    padding: 2px;
+}
+
+/* Test parameters table */
+.TestParameters, .practiceTest, .startCDTT, .scoreLabel, #showResultsContainer {
+    overflow: auto;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 600px;
+}
+
+/* .containerUser {
+    max-width: 1200px
+} */
+
+#showResultsContainer h4, #showDetailedResults h4 {
+    font-size: 20px ;
+    margin-top: 20px;
+}
+
+p#labelProgress  {
+    margin-top: 10px;
+    text-align: center;
+}
+
+input#speechCalib {
+    width: 50px;
+}
+
+#calibrationValueFrame button.btnPlay:hover:enabled {
+    background-color: #2d781b; 
+    cursor: pointer; 
+}
+
+#calibrationValueFrame button.btnPause:hover:enabled {
+    background-color: #f23a2d;  
+    cursor: pointer;
+}
+
+#calibrationValueFrame button.btnPlay {
+    background-color: #45b528 ;  
+}
+
+#calibrationValueFrame button.btnPause {
+    background-color: #ff6054;  
+}
+
+#calibrationValueFrame #btnCalibMaskerPlay:disabled {
+    background-color: #aaaaaa ;
+    color: black;
+}
+
+.calibrationParametersTable, .testParametersTable, .practiceTestBtnClass {
+    table-layout: fixed;
+}
+
+.practiceTestBtnClass #btnPracticeTest, .practiceTestBtnClass #btnSkipToTest {
+    width: 130px;
+}
+
+@media screen and (max-width: 500px) {
+    .testParametersTable tr {
+        display: flex !important;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+    }
+}
+
+/*******************
+TEST RESULTS MODAL
+********************/
+
+/* Test results table */
+.tableResults {
+    overflow: auto;
+    min-width: 70px;
+    max-width: 500px;
+    text-align: left;
+    padding: 10px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Adaptive results table */
+.adaptiveResults {
+    overflow: auto;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    min-width: 200px;
+    max-width: 500px;
+    border-collapse: collapse; 
+    border: 1pt solid black;
+}
+
+/* Printing button */
+.tableModal_btn {
+    width: 100%;
+    text-align: right;
+}
+
+/* Data fields */
+th.results {
+    padding: 5px;
+    margin: 20px;
+}
+
+/* Optional questions */
+p.qResults {
+    text-align: left;
+    margin-left: 15px;
+    font-size: 14px;
+}
+
+span.mx-auto.mb-2.badge.text-dark.bg-light {
+    background-color: white !important;
+    font-weight: 400;
+}
+
+div.invalidInput {
+    font-size: 14px;
+    text-align: left;
+    padding-left: 15px;
+    margin-top: 0px;
+}
+/* Invalid input */
+input:invalid{
+    border: 2px solid red;
+    border-radius: 4px;
+}
+
+/* Comment */
+.maxSizeTextArea {
+    font-size: 14px;
+    width: 98%;
+    text-align: right;
+    color: #737373;
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
+/* Extended Results table */
+.tableExtendedResults {
+    color: rgb(0, 0, 0);
+    width: 70%;
+    border: 1px;
+    border-collapse: collapse;
+    margin-right: auto;
+    margin-left: auto;
+    max-width: 500px;
+    overflow: auto;   
+} 
+
+.tableExtendedResults tr:nth-child(0) {
+    
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+}
+
+.tableExtendedResults tr:nth-child(even){
+    background-color: #f2f2f2;
+}
+
+.tableExtendedResults td:nth-child(0) {
+    text-align: center;
+    padding: 2px;
+}
+
+.tableExtendedResults td, .tableExtendedResults th {
+    border: 1px solid #ddd;
+    padding: 4px;
+}
+
+/* .tableExtendedResults th {
+    text-align: center;
+} */
+
+.dataModalResults table, .dataModalResults h5 {
+    text-align: center;
+    align-content: center;
+    margin: auto;
+}
+
+.termsAndConditions p, #speechCalibF p, #maskerCalibF p {
+    font-size: 14px; 
+    text-align: left;
+}
+
+button.dataMenuBtn {
+    background-color: #3f48cc;
+}
+
+table.dataModalTable {
+    display: flex;
+    justify-content: space-between;
+}
+
+table.dataModalTable td h6 {
+    margin-left: 5px;
+}
+
+button.dataMenuBtn:hover {
+    background-color: #252eb2;
+}
+
+.termsAndConditions p {
+    margin-bottom: 0px;
+    margin-left: 15px;
+
+}
+
+textarea {
+    font-size: 14px;
+}
+
+/*******************
+ON-SCREEN KEYBOARD
+********************/
+.tableKeyboard {
+    margin: auto;
+    padding: 10px;
+    width: 40%;
+    min-width: 200px;
+    max-width: 300px;
+    box-sizing: border-box;
+    border: 1px solid black;
+    margin-top: 20px;
+}
+
+/* Text field input on the on-screen keyboard */
+.inputUserKeyboard {
+    padding: 5px;
+    align-content: center;
+    width: 90%;
+    margin: 8px;
+    height: 40px;
+    font-size: 30px;
+    text-align: center;
+}
+
+.inputUserKeyboard, .inputUserKeyboard::after, .inputUserKeyboard::before {
+    box-sizing: unset;
+}
+
+/* *, ::after, ::before {
+    box-sizing: ;
+} */
+
+/* Number, Submit and Delete buttons */
+.keyboardBtn{
+    background-color: white;
+    border-radius: 10px;
+    color: black;
+    font-size: 40px;
+    text-align:center;
+    vertical-align: middle;
+    line-height: 15px;
+    width: 80px;
+    height: 80px;
+}
+
+/* Submit button */
+.btnSubmit {
+    background-color: rgb(0, 142, 0);
+}
+
+/* Submit button, when hovered and enabled */
+.btnSubmit:hover:enabled {
+    background-color: rgb(0, 108, 0);
+    cursor: pointer;
+}
+
+/* Delete button */
+.btnDelete {
+    background-color: darkgray;
+}
+
+/* Delete button, when hovered and enabled */
+.btnDelete:hover:enabled {
+    background-color: rgb(137, 137, 137);
+}
+
+/* Submit and delete buttons image */
+img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+
+
+/*******************
+MODALS
+********************/
+/* The Modal (background) */
+
+
+/* Modal Content/Box */
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    /* border: 1px solid #888; */
+    width: 70%; /* Could be more or less, depending on screen size */
+    max-width: 800px;
+    min-width: 250px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 15%;
+    /* -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.5s; */
+    animation-name: animatetop;
+    animation-duration: 0.5s;
+}
+
+.modal-content.calibration {
+    max-width: 650px;
+}
+
+.modal-content.askViewResults {
+    width: 40%;
+}
+
+.modalButton { 
+    width: 45%;
+    padding: 14px 20px;
+    margin-left: auto;
+    margin-right: auto;
+    border: none;
+    cursor: pointer;
+    border-radius: 0px;
+}
+
+/* Add a color to the cancel button */
+.cancelbtn {
+    background-color: #ccc;
+    color: black;
+    border: none;
+    width: 50%;
+}
+
+/* Add a color to the delete button */
+
+.modalButton.okBtn {
+    background-color: #45b528;
+    width: 15%;
+    padding: 14px 0px;
+}
+
+/* Model-content */
+.modal-content p {
+    font-size: 14px;
+}
+
+/* Buttons hovered and enabled */
+.allowBtn:hover:enabled, .modalButton.okBtn:hover:enabled {
+    background-color: #2d781b;
+}
+
+/* Modal buttons */
+/* .submitResultsBtn, .cancelResultsBtn, .btnViewResults, .btnNotViewResults {
+    width: 100%;
+    min-width: 150px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 14px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 0px;
+} */
+
+.btnViewResults {
+    /* width: 50%; */
+    background-color:#45b528 ;
+    max-width: 200px;
+    color: #000;
+    border: none;
+}
+
+.allowBtn{
+    background-color:#45b528 ;
+    color: #000;
+    border: none;
+    /* max-width: fit-content; */
+    width: 50%;
+}
+
+.submitResultsBtn {
+    background-color:#45b528 ;
+    color: #000;
+    border: none;
+    /* max-width: fit-content; */
+    width: 40%;
+}
+
+.btnNotViewResults {
+    /* width: 50%; */
+    background-color: #ccc;
+    border: none;
+    max-width: 200px;
+    color: #000;
+}
+
+/* Hovered and enabled */
+.btnViewResults:hover:enabled {
+    background-color:#2d781b;
+}
+
+.submitResultsBtn {
+    background-color: #45b528;
+}
+
+.cancelResultsBtn {
+    background-color: #ccc;
+}
+
+/* Hovered and enabled */
+.submitResultsBtn:hover:enabled {
+    background-color: #2d781b;
+}
+
+/* Add padding and center-align text to the container */
+.container {
+    padding: 16px;
+    text-align: center;   
+}
+
+/* The Modal Close Button (x) */
+.close {
+    position: absolute;
+    right: 35px;
+    top: 15px;
+    font-size: 40px;
+    font-weight: bold;
+    color: #f1f1f1;
+}
+
+.close:hover,
+.close:focus {
+    color: #f44336;
+    cursor: pointer;
+}
+
+/* Clear floats */
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.clearfix {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+}
+
+
+
+/*******************
+TEST INSTRUCTIONS
+********************/
+li {
+    padding: 2px;
+}
+
+
+
+/*******************
+ANIMATION
+********************/ 
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0} 
+    to {top:0; opacity:1}
+}
+  
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+
+
+/*******************
+MEDIA SCREEN
+********************/ 
+/* Change styles for cancel button and delete button on extra small screens */
+/* @media screen and (max-width: 300px) {
+    .cancelbtn, .allowBtn {
+        width: 100%;
+    }
+} */
+
+@media screen and (max-width: 500px) {
+    .testParametersTable tr {
+        display: block;
+    }
+
+    .testParametersTable tr>td:nth-last-child(-n + 2) {
+        display: inline-block;
+        flex-direction: row;
+    }
+    
+
+    #testParameterFrame {
+        width: 80%;
+        /* Center the frame */
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .testParametersTable td {
+        padding: 2px;
+    }
+
+    .practiceTestBtnClass tr {
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        justify-content: space-evenly;
+        flex-wrap: nowrap;
+        align-items: center;
+    } 
+
+    .allowBtn, .cancelbtn {
+        width: 90%;
+    }
+
+    .submitResultsBtn {
+        width: 90%;
+    }
+
+    .clearfix {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-direction: column-reverse;
+        align-items: center;
+    }
+
+    
+}
+
+@media screen and (max-width: 500px) {
+
+    .calibrationParametersTable tr {
+        display: block;
+        width: 100%;
+    }
+
+    .calibrationParametersTable tr>td:nth-last-child(-n + 2) { 
+        flex-direction: row;
+    }
+
+    #tdSpeechCalib, #playMaskerBtn {
+        vertical-align:baseline
+    }
+
+    #tdSpeechCalib, #tdMaskerCalib {
+        display: inline-block;
+        flex-direction: row;
+    }
+
+    .btnPlay {
+        display: table-cell;
+    }
+
+    #trMaskerCalib {
+        display: inline-block;
+    }
+
+    #calibrationValueFrame {
+        width: 80%;
+        /* Center the frame */
+        margin-right: auto;
+        margin-left: auto;
+    }
+    .calibrationParametersTable td {
+        padding: 2px;
+    }
+
+    #extraCellCalib {
+        display: none;
+    }
+
+    #playMaskerBtn {
+        text-align: right; 
+        justify-content: flex-start;
+    }
+}
+
+@media screen and (min-width: 501px) {
+#playMaskerBtn {
+    display: flex;
+    justify-content: center; 
+}
+}
+
+@media screen and (max-width: 600px) {
+    table.dataModalTable {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: column-reverse;
+        flex-wrap: nowrap;
+    }
+}
+
+/***************************************************
+LOADING SEQUENCE WHEN SUBMITING RESULTS TO DATABASE
+****************************************************/ 
+/* Loading bar */
+.loader {
+    position:relative;
+    z-index: 1;
+    width: 60px;
+    height: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+}
+  
+/* Loading bar Animation */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+  
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+{
+    "language": [ "EN_CA", "FR_CA"],
+    "talker": ["Female", "Male"],
+    "list": ["01", "02", "03", "04"],
+    "masker": "SSNOISE",
+    "testMode": "Adaptive",
+    "testEar": "Diotic",
+    "tripletType": ["Triplet", "All Digit"],
+    "CALIB_FRAME_MASKER": "Masker volume is set to : ",
+    "LANGUAGE_PROFICIENCY": ["", "Native Speaker", "Advanced", "Intermediate", "Beginner"],
+    "HEARING_1": ["", "Good", "Fair", "Poor"],
+    "HEARING_2": ["", "Both ears are the same", "Left ear is better", "Right ear is better"]
+}
