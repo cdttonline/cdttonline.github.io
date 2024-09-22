@@ -1,7 +1,3 @@
-
-import { getDocs } from 'firebase/firestore';
-// import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js';
-// import { getFirestore, collection, Timestamp } from 'https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection } from 'firebase/firestore';
 import {getAuth} from "firebase/auth"

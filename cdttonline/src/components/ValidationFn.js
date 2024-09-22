@@ -3,7 +3,6 @@ const ValidateFn = {};
 const validateTestUserResults = (answer) => {
     console.log("The answers to be validated are", answer);
     let res = [];
-    let items = [];
     for (let key in answer) {
         if (key == "age") {
             validateAge(answer[key], res);
@@ -15,6 +14,19 @@ const validateTestUserResults = (answer) => {
     }
     return res;
 }
+
+const validatePwdChange = (answer) => {
+    let res = [];
+    for (let key in answer) {
+        if (key == "newPwd") {
+            validatePassword(answer[key], res);
+        } else if (key == "confirmNewPwd") {
+            validatePasswordConfirm(answer[key], answer["newPwd"], res);
+        }
+    }
+    return res;
+}
+
 
 const validateAddingUser = (answer) => {
     console.log("The answers to be validated are", answer);
@@ -31,6 +43,15 @@ const validateAddingUser = (answer) => {
         //     validatePassword(answer[key], res);
         // }
     }
+    return res;
+}
+
+const validatePasswordConfirm = (confirmPwd, newPwd, res) => {
+    let feedback = "";
+    if (confirmPwd != newPwd) {
+        feedback = "Your passwords don't match."
+    } 
+    res.push(feedback);
     return res;
 }
 
@@ -109,6 +130,10 @@ const validateCheck = (check, res) => {
 };
 
 
+
+ValidateFn.validatePwdChange = (answer) => {
+    return validatePwdChange(answer);
+}
 
 ValidateFn.validateTestUserResults = (answer) => {
     return validateTestUserResults(answer);

@@ -1,22 +1,13 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import PracticeTest from "./PracticeTest";
 import {mean, sum, stdDev} from "./DSPutils";
-import Table from "../components/Table";
 import {processUserAnswer} from "../components/Table"
 import TestModalResults from "./TestModalResults";
 import InputMask from 'react-input-mask';
-
-// import CDTT from "./CDTT";
+import { convertMilliSecToTime, currentDate, currentTime } from "../components/DateTimeHelperFn";
 
 function TestMainFrame ()  {
     const { state } = useLocation();
-    const [inputUserText, setInputUserText] = useState("");
-    useEffect(() => {
-        console.log(state);
-
-
-    }, []);
 
     const [initialValues, setInitialValues] = useState({
         language: state.parameters.language,
@@ -34,11 +25,16 @@ function TestMainFrame ()  {
         tripletType: state.parameters.tripletType
     });
 
+    // Variables
+    const [inputUserText, setInputUserText] = useState("");
     const [correctAnswer, setCorrectAnswer] = useState([])
     const [userAnswerSubmit, setUserAnswerSubmit]=useState([]);
-
     const [list_wav, setList_wav] = useState([]);
-    // const [nProgress, setNProgress]=useState(0);
+    const [bDisableDelete, setBDisableDelete] = useState(true)
+    const [bDisableSubmit, setBDisableSubmit] = useState(true);
+    const [bNotReadyForAnswer, setbNotReadyForAnswer] = useState(true);
+    const [disableKeys, setDisableKeys] = useState(false);
+    const [ixCurrentTriplet, setIxCurrentTriplet] = useState(0);
 
     const clearKeyboard =()=> {
         // Clear keyboard
@@ -47,61 +43,41 @@ function TestMainFrame ()  {
         updateTextFieldKeyboard(clearKeyboard);
     }
 
-    const [bDisableDelete, setBDisableDelete] = useState(true)
-    const [bDisableSubmit, setBDisableSubmit] = useState(true);
-    const [bNotReadyForAnswer, setbNotReadyForAnswer] = useState(true);
-    const [disableKeys, setDisableKeys] = useState(false);
-    const [ixCurrentTriplet, setIxCurrentTriplet] = useState(0);
-    // let ixCurrentTriplet = 0;
     /**
      * This function updates the textfield keyboard.
      * @param {String} answer 
      */
     const updateTextFieldKeyboard =(answer)=> {
-
         // First, trim the answer if we got more digits than we need
         if (answer.length > 3) {
             answer = answer.substring(0, 3);
         }
 
-        if (answer.length == 0) 
-        {
+        if (answer.length == 0) {
             // Disable delete button
             setBDisableDelete(true);  
-            // setBDisableSubmit(true);     
             setBDisableSubmit(true); 
-
-        } 
-        else if (answer.length == 3) 
-        { 
+        } else if (answer.length == 3) { 
             // Enable the submit button
             setBDisableSubmit(false); 
             setDisableKeys(true)    
-        }else if (answer.length > 0) {
+        } else if (answer.length > 0) {
             setBDisableDelete(false)
             setBDisableSubmit(true); 
-
         }
 
         // The current answer replaces the text area value 
         setInputUserText(answer);
-        console.log("answer: " + answer)
-        
-        // If the audio is done playing and all 3 numbers are entered on keypad,
-        // then enable the submit button, otherwise, disable
     }
 
     const [numCorrectTriplet, setNumCorrectTriplet] = useState(0);
-
     const [submitBtnTestVal, setSubmitBtnTestVal] = useState(0);
     const [audioIsOn, setAudioIsOn] = useState(false);
+    
     /**
-     * This function makes a practice test for the participant. It creates a
-     * PracticeTest() object, where a random list is chosen to perform the 
-     * practice test. With the chosen random list, the CDTT.getListOfFile()
-     * static method is called to return the path of the folder where all 
-     * .wav files are stored. 
-     * This function also keeps track of the number of triplets that have 
+     * This function makes a practice test for the participant. It creates a PracticeTest() object, where a random list is chosen 
+     * to perform the practice test. With the chosen random list, the CDTT.getListOfFile() static method is called to return the 
+     * path of the folder where all .wav files are stored. This function also keeps track of the number of triplets that have 
      * been completed, when a .wav file is played.
      */
     const startPracticeTest =()=> {
@@ -123,7 +99,6 @@ function TestMainFrame ()  {
             handleVisibilityKeyboard(false);
         } else {
             // Play audio file
-            // console.log(list_wav)
             playAudio(list_wav.find((val, idx) => idx === ixCurrentTriplet), speechVolume); 
         }
     }
@@ -162,46 +137,43 @@ function TestMainFrame ()  {
             wavFile.send();
     }
 
-    const [maskerAudioWav, setMaskerAudioWav] =useState("https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Maskers/SSNOISE.wav");
-
+    const [maskerAudioWav, setMaskerAudioWav] = useState("https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Maskers/SSNOISE.wav"); // default wav
 
     const getCorrectFile =(url, list)=> {
         var file = new XMLHttpRequest();
         let maskerUrl = "";
         file.open('GET', url , true)
         file.onload = function() {
-                var data = JSON.parse(this.response);
-                // set the number of lists
-                for (let i=0; i<data.length; i++) {
-                    
-                    // Check if the name of the Triplet corresponds to any
-                    // of the list name
-                    // ex. Triplet_List-01
-                    let nameFolder = data[i].name;
-                    // console.log("name : " + nameFolder)
+            var data = JSON.parse(this.response);
+            // set the number of lists
+            for (let i=0; i<data.length; i++) {
+                
+                // Check if the name of the Triplet corresponds to any
+                // of the list name
+                // ex. Triplet_List-01
+                let nameFolder = data[i].name;
 
-                    // Check for masker 
-                    if (nameFolder == "SSNOISE.wav") {
-                        maskerUrl = data[i].download_url;
-                    } 
-                    else {
-                        const paramArray = nameFolder.substring(13); 
-                        
-                        // Check if all the parameters of the folder correspond to the ones selected by the user
-                        if (paramArray == list){ 
-                            // Found list
-                            // Returns the path of folder to access it later on
-                            if (maskerUrl == "") {
-                                maskerUrl="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Maskers/SSNOISE.wav"
-                            }
-                            // console.log(maskerUrl);
-                            setMaskerAudioWav(maskerUrl);
-                            getWavFolder(data[i].url, maskerUrl);
+                // Check for masker 
+                if (nameFolder == "SSNOISE.wav") {
+                    maskerUrl = data[i].download_url;
+                } 
+                else {
+                    const paramArray = nameFolder.substring(13); 
+                    
+                    // Check if all the parameters of the folder correspond to the ones selected by the user
+                    if (paramArray == list){ 
+                        // Found list
+                        // Returns the path of folder to access it later on
+                        if (maskerUrl == "") {
+                            maskerUrl="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Maskers/SSNOISE.wav"
                         }
+                        setMaskerAudioWav(maskerUrl);
+                        getWavFolder(data[i].url, maskerUrl);
                     }
                 }
             }
-            file.send();
+        }
+        file.send();
     }
 
     const getWavFolder=(url, maskerUrl)=>{
@@ -222,19 +194,15 @@ function TestMainFrame ()  {
             // Mix the order of the triplets randomly
             while (data.length > 0) {
                 let random = Math.floor(Math.random() * data.length);
-                // console.log("list_was::: " + data[random].download_url)
-                // this.list_wav[i] = data[random].download_url;
                 list_wav.push(data[random].download_url);
 
                 // Get the correct answer triplet
                 tmpCorrectAnswer[i] = data[random].name;
                 // Delete .wav, keep the triplet digits
                 correctAnswer.push(tmpCorrectAnswer[i].substring(0,3));
-                // correctAnswer[i] = tmpCorrectAnswer[i].substring(0,3);
                 data.splice(random, 1);
                 i++; 
             }
-
             playAudio(list_wav.find((val, idx) => idx === 0), speechVolume);
         }
         wavFiles.send();
@@ -244,7 +212,7 @@ function TestMainFrame ()  {
     const [btestQuiet, setBTestQuiet] = useState(state.parameters.isTestInQuiet);
     const [initVal, setInitVal] =useState(initialValues.initialVolume);
     const [speechVolume, setSpeechVolume] = useState(initialValues.speechLevel);
-    const [currentSNR, setCurrentSNR]=useState(initialValues.currentSNR)
+    const [currentSNR, setCurrentSNR]=useState(initialValues.currentSNR);
 
     useEffect(() => {
         console.log("======================================================")
@@ -253,8 +221,8 @@ function TestMainFrame ()  {
         console.log("======================================================")
 
     }, [ixCurrentTriplet, numberReversal, currentSNR]);
+
     const playAudio=(wavFile, speechVolume)=> { 
-        
         // Create triplet and masker audio object
         var audio = new Audio(wavFile);
         var maskerNOISE = new Audio(maskerAudioWav);
@@ -264,52 +232,35 @@ function TestMainFrame ()  {
         audio.crossOrigin = 'anonymous';
         maskerNOISE.crossOrigin = 'anonymous';
         try {
+            // Set the volume for audio
+            if (initialValues.mode == "Adaptive") {
+                audio.volume = speechVolume;
+            } else {
+                // Audio volume stays the same
+                audio.volume = initialValues.speechLevel;
+            }
 
+            // Set the volume for masker
+            maskerNOISE.volume = initialValues.maskerLevel;
+            // No masker, test in quiet
+            if (btestQuiet===true) {
+                maskerNOISE.volume = 0.0;
+            }
             
-            
-            // Calculate the gain volume
-            // var prevVolume = initVal;
-            // const newValue = newVolume(initVal)
-            // setInitVal(newValue);
-            // var setVolume = gainVolume(prevVolume, newValue);
-            // console.log("set vol ===== " + setVolume)
-            // // Play the triplet and the masker only if the 
-            // // gain value is between 0.0 and 1.0
-            // if (setVolume) {
-                
-                // Set the volume for audio
-                //audio.volume = initialVolume;
-                if (initialValues.mode == "Adaptive") {
-                    audio.volume = speechVolume;
-                } else {
-                    // Audio volume stays the same
-                    audio.volume = initialValues.speechLevel;
-                }
+            // Play audio
+            maskerNOISE.play();
+            audio.play();
 
-                // Set the volume for masker
-                maskerNOISE.volume = initialValues.maskerLevel;
-                // No masker, test in quiet
-                if (btestQuiet===true) {
-                    maskerNOISE.volume = 0.0;
-                }
-                
-                // Play audio
-                maskerNOISE.play();
-                audio.play();
+            setAudioIsOn(true);
 
-                setAudioIsOn(true);
-
-                console.log("volume audio=" + speechVolume + " | volume masker="+ maskerNOISE.volume );
-            // }
-
-
+            console.log("volume audio=" + speechVolume + " | volume masker="+ maskerNOISE.volume );
 
             let stopBtn = document.getElementById("btnStopTest");
             stopBtn.addEventListener("click", function () {
                 // Stop audio
                 maskerNOISE.pause();
                 audio.pause();
-            })
+            });
 
             // Check if user clicked on the skip to test button
             let skipBtn = document.getElementById("btnSkipToTest");
@@ -318,6 +269,7 @@ function TestMainFrame ()  {
                 maskerNOISE.pause();
                 audio.pause();
             });  
+
         } catch (err) {
             console.log("failed to play " + err);
         }
@@ -332,30 +284,20 @@ function TestMainFrame ()  {
 
             // Reset the practice button
             setAudioIsOn(false);
-            // // check if all 3 digits are already entered on keyboard
-            // let tmpInputValue = document.getElementById('inputUserText').value;
-
-            // // Update the textfield
-            // if (tmpInputValue.length == 3) {
-            //     updateTextFieldKeyboard(tmpInputValue);
-            // }      
         };
     }
 
     // let isCorrectAnswer = false;
     const [bCorrectAnswer, setbCorrectAnswer] = useState(false);
     const [dBSTEP, setDBStep] = useState(parseFloat(0.0));
-    // let dBStep = 0.0;
     const [nmisses, setNMisses] = useState(0);
 
     const gainVolume=(prevVolume, initVal)=> {
-        
         // Gain is greater than 1.0, therefore abort test run
         if ( submitBtnTestVal == 2) {
             if (initVal > 1.00) {
                 initVal = prevVolume;
                 alert("The maximum volume has been reached. \nThe test run is aborted.");
-                
                 stopTest();
                 return false;
             } 
@@ -373,24 +315,18 @@ function TestMainFrame ()  {
         }     
         return true;
     }
+
     const [enableKeyboard, setEnableKeyboard] = useState(true)
 
     const stopTest=()=> {
-
         setDisableStartBtn(false); // Disable stop button, enable start button
-
         // Set the submit button value back to zero
         setSubmitBtnTestVal(0);
-        
         // Hide the keyboard
         setEnableKeyboard(true);
-    
         // Clear keyboard
         clearKeyboard();
-
         resetKeyboardKeys();
-
-    
         // Hide the status bar
         setHideTextProgress(true);
     }
@@ -437,7 +373,6 @@ function TestMainFrame ()  {
 
         // Implement backspace
         if (currentAnswer.length > 1) {
-    
             // Remove the last digit in the answer text field
             currentAnswer = currentAnswer.substring(0, currentAnswer.length-1);
         } else {
@@ -458,7 +393,6 @@ function TestMainFrame ()  {
     }
 
     const scoreTestAllDigits=(correctAnswer, userAnswerSubmit)=>{
-
         // Allow scoring with permutation
         let tmpNumCorrectDigit = 0;
         // Split the answers into arrays 
@@ -487,13 +421,9 @@ function TestMainFrame ()  {
     const [scorePracticeTest, setScorePracticeTest]=useState('');
     const [showScorePracticeTest, setShowScorePracticeTest]=useState(false);
     let testProgress = 0;
-    // const [bNextDigit, setbNextDigit]=useState(true);
     let bNextDigit = true;
-    const moveToTheNextTriplet=()=> {
-        // Increment the triplet index
-        // setIxCurrentTriplet(ixCurrentTriplet+1);
-        // ixCurrentTriplet=ixCurrentTriplet+1;
-    
+
+    const moveToTheNextTriplet=()=> {    
         // Update the progress
         progress(ixCurrentTriplet);
     
@@ -502,23 +432,17 @@ function TestMainFrame ()  {
     }
 
     const testMoveToTheNextTriplet=(currentTriplet)=> {
-        // Increment the triplet index
-        // setIxCurrentTriplet(ixCurrentTriplet+1);
-        // ixCurrentTriplet=ixCurrentTriplet+1;
-    
         // Update the progress
         progress(currentTriplet);
     
         // Return true as long as we haven't reached the end
         return (currentTriplet <= (list_wav.length-1));
     }
+
     const progress=(currentTriplet)=> {
-        // setNProgress(currentTriplet);
         testProgress = currentTriplet;
         return testProgress;
     }
-
-    // let numCorrectTriplet = 0;
 
     const [resultsTriplet, setResultsTriplet]=useState({
         correctAnswer: [],
@@ -529,24 +453,16 @@ function TestMainFrame ()  {
     const [testDuration, setTestDuration] = useState('');
     const [startTestTime, setStartTestTime] = useState('');
     const [testDate, setTestDate] = useState('');
-
-
     const [hideTestModalResults, setHideTestModalResults]=useState(true);
+
     const keypadSubmitListener =()=> {
         
         userAnswerSubmit.push(inputUserText);
         let newUserAnswer = userAnswerSubmit.find((val, i) => i === userAnswerSubmit.length-1);
-
     
-        // Submit button won't be enabled until the next 
-        // audio file is done playing 
-        // setbNotReadyForAnswer(true);
-        
         // Scores the answer of the current triplet
         const scoreTripletBool = scoreCurrentTriplet(correctAnswer.find((val,idx)=>idx ===ixCurrentTriplet), newUserAnswer);
         setbCorrectAnswer(scoreTripletBool);
-        // isCorrectAnswer = scoreTripletBool;
-        // isCorrectAnswer = scoreTripletBool
         const tmpDBStep = computeCurrentSNR(scoreTripletBool);
         
         // Clear the previously saved subject answer
@@ -563,22 +479,11 @@ function TestMainFrame ()  {
             } else {
                 setScorePracticeTest("Incorrect Answer.\nParticipant Answer: " + userAnswerSubmit.find((val,i)=>i===ixCurrentTriplet) + "\nCorrect Answer: " + correctAnswer.find((val,i)=> i===ixCurrentTriplet));
             }
-            setShowScorePracticeTest(true)
-
-    
-            // Disable the keyboard
-            // enableKeyboardKeys(false, true);
-            
-            // Enable the "Test Practice" button
-            // document.getElementById("btnPracticeTest").disabled = false;
-    
+            setShowScorePracticeTest(true);
             
             // Move to the next triplet
             let moveToNextTriplet = moveToTheNextTriplet();
-            // setbNextDigit(moveToNextTriplet);
             bNextDigit = moveToNextTriplet;
-    
-            // Executing test
         } else {
             // console.log("submit not test 1")
             setDisableKeys(false);
@@ -586,40 +491,29 @@ function TestMainFrame ()  {
             // Check if its the first triplet and incorrect
             if ((ixCurrentTriplet == 0) && (scoreTripletBool == false)) {
                 // Repeat the first triplet
-                console.log("FIRST TRIPLET & INCORRECT");
                 // Play audio file and update status bar
                 updateProgressStatusBar();
-
-            
-                    tempVolume = Math.pow(10, tmpDBStep/20);
-                    const oldSpeechVal = speechVolume;
-                    setSpeechVolume((prevVolume) => tempVolume * prevVolume);
-                    var tmpspeechVolume = tempVolume * oldSpeechVal
-                    var setVolume = gainVolume(oldSpeechVal, tmpspeechVolume);
-                    if (setVolume) {
-                        playAudio(list_wav.find((val, idx) => idx == ixCurrentTriplet), tmpspeechVolume); 
-                    }
-                
-                
+                tempVolume = Math.pow(10, tmpDBStep/20);
+                const oldSpeechVal = speechVolume;
+                setSpeechVolume((prevVolume) => tempVolume * prevVolume);
+                var tmpspeechVolume = tempVolume * oldSpeechVal
+                var setVolume = gainVolume(oldSpeechVal, tmpspeechVolume);
+                if (setVolume) {
+                    playAudio(list_wav.find((val, idx) => idx == ixCurrentTriplet), tmpspeechVolume); 
+                }
             } else {
                 const newCurrentTriplet = ixCurrentTriplet+1;
                 var newCorrectTriplet = numCorrectTriplet;
                 setIxCurrentTriplet( (i)=> i + 1);
                 if (scoreTripletBool) {
-                    console.log("ICREMENT NUM OF CORRECT TRIPLET")
-                    // Increment the number of correct triplet
-                    // numCorrectTriplet++;
                     var newCorrectTriplet = numCorrectTriplet +1;
                     setNumCorrectTriplet(numCorrectTriplet+1);
                     tempVolume = Math.pow(10, -(tmpDBStep)/20);
-
                     const oldSpeechVal = speechVolume;
                     setSpeechVolume((prevVolume) => tempVolume * prevVolume);
                     var tmpspeechVolume = tempVolume * oldSpeechVal
                     var setVolume = gainVolume(oldSpeechVal, tmpspeechVolume);
                 } else {
-                    console.log(">>NOT THE CORRECT ANSWER")
-
                     tempVolume = Math.pow(10, tmpDBStep/20);
                     const oldSpeechVal = speechVolume;
                     setSpeechVolume((prevVolume) => tempVolume * prevVolume);
@@ -639,15 +533,7 @@ function TestMainFrame ()  {
                     updateProgressStatusBar();
                     setHideTextProgress(true);
                 
-                    // disableTestParameters(false);
-
                     let endTime = new Date(); 
-
-                    // Set the global variable values
-                    // resultsTriplet.correctAnswer.push((id) => {
-                    //     correctAnswer.forEach((val, idx) idx = id)
-                    // });
-                    // resultsTriplet.userAnswer.push(userAnswerSubmit);
                     setResultsTriplet({
                         ...resultsTriplet,
                         correctAnswer: correctAnswer,
@@ -655,10 +541,7 @@ function TestMainFrame ()  {
                         completedTriplet: ixCurrentTriplet
                     });
 
-                    //  ixCurrentTriplet;
-                    // setResultsTriplet((i) => i.completedTriplet = ixCurrentTriplet);
-                    // Display a message prompt that we're done. This breaks the thread
-                    // execution allowing the subject to pass control to the operator
+                    // Display a message prompt that we're done. This breaks the thread execution allowing the subject to pass control to the operator
                     console.log("correct answer: " + correctAnswer + " || user: " + userAnswerSubmit + " || completed: " + ixCurrentTriplet);
                     
                     // Compute test results
@@ -668,30 +551,8 @@ function TestMainFrame ()  {
                     let duration = Math.abs(endTime.getTime() - startDateTime.getTime());
                     setTestDuration(convertMilliSecToTime(duration));
                     setTestDate(currentDate(startDateTime));
-                    setStartTestTime(currentTime(startDateTime));
-                    // Hide and dispose the keypad and stop test
-                    // Notify the main thread that final iteration is done
-
-                    // Open modal with the results
-                    // document.getElementById('modalAskViewResults').style.display = 'block';
-
-                    // Get the number of triplets 
-                    let numberTriplets = ixCurrentTriplet;
-                    
-                    // Create an object to show on the modal --> results page
-                    // var showResults = new ModalResults(language, talker, list, mode, tripletType, testEar, masker, startingSNR, SRT, STDEV, numberReversal, testDate, testDuration, startTestTime, numberTriplets);
-                    // showResults.showModalResults();
-                    // showResults.show();  
-                    
-                    // showResultsGlobal();
-                    // // // stop test to reset the parameters
-                    // stopTest();
-
-                    // return (
-                    //     )
+                    setStartTestTime(currentTime(startDateTime));                    
                     setHideTestModalResults(false);
-
-
                 } else {  
                     // Play audio file and update status bar
                     updateProgressStatusBar();                    
@@ -704,98 +565,45 @@ function TestMainFrame ()  {
     }
 
     useEffect(() => {
-        console.log("Result triplets");
-        console.log(resultsTriplet);
-
         const test = processUserAnswer(resultsTriplet.correctAnswer, resultsTriplet.userAnswer);
-        console.log("test value is:")
-        console.log(test)
     }, [resultsTriplet])
-
-
-    const currentDate=(date)=> {
-        return ((date.getDate() < 10)?"0":"") + date.getDate() +"-"+(((date.getMonth()+1) < 10)?"0":"") + (date.getMonth()+1) +"-"+ date.getFullYear();
-    }
-
-    const currentTime=(time)=>{
-        return ((time.getHours() < 10)?"0":"") + time.getHours() + ":" + ((time.getMinutes() < 10)?"0":"") + time.getMinutes() + ":" + ((time.getSeconds() < 10)?"0":"") + time.getSeconds();
-    }
-    const convertMilliSecToTime=(duration)=> {
-    
-        // Convert the time to seconds and minutes
-        let seconds = Math.floor(duration/1000) % 60;
-        let minutes = Math.floor(duration/ (1000*60));
-    
-        seconds = (seconds < 10) ? "0" + seconds : seconds;
-        minutes = (minutes < 10) ? "0" + minutes : minutes;
-    
-        return minutes + "min " + seconds + "s";
-    }
 
     const [SRT, setSRT]=useState(parseFloat(0.0));
     const [STDEV, setSTDEV]=useState(parseFloat(0.0));
     const [numReversals, setnumReversals]=useState(0);
+
     const endOfSession=(bCorrectAnswer)=> {
 
         // Compute the last SNR value: this is the value that the next
         // triplet would have been presented at based on the answer to
         // te last triplet presented.
         computeCurrentSNR(bCorrectAnswer);
-    
-        // Reset the current triplet index
-        // ixCurrentTriplet = 0;
-           
+               
         // Compute the SRT
         // Compute the mean SNR over a given number of iterations
-        console.log("SNR val: ")
-        console.log(SNR)
         setSRT(mean(SNR, 4.0, SNR.length-1));
     
         // Compute STDEV
         // Compute the standard deviation over a given number of iterations
         setSTDEV(stdDev(SNR, 4.0, SNR.length-1));
     
-    
         // Compute the number of reversals
         // Compute then mean SNR over a given number of iterationss
-        //numberReversal = DSPutils.sum(reversal, 4.0, reversal.length-1);
         setnumReversals(sum(reversal, 4.0, reversal.length-1));
-
-        // setIxCurrentTriplet(0);
-
     }
 
     const [reversal, setReversalArray]=useState([]);
-    const setReversal=(idx, nreversal)=> {
-        const tmpReversalList = [...reversal];
-        const newReversalVal = tmpReversalList.find((val, i) => i === idx);
-        newReversalVal = parseInt(nreversal);
-        setReversalArray(tmpReversalList);
-    }
-    const getReversal=(idx)=> {return parseInt(reversal.find((val, i)=> i === idx));}
 
     const [textProgress, setTextProgress]=useState('');
     const [hideTextProgress, setHideTextProgress]=useState(true);
     const updateProgressStatusBar=()=> {
-        // Test session done
-        // if (!bNextDigit) { 
-        //     textProgress = "Test Session Done";
-        // } else  {
-            setTextProgress("Set " + (testProgress + 1) + " / 24");
-        //}
+        setTextProgress("Set " + (testProgress + 1) + " / 24");
     }
 
     const [firstCorrectAnswer, setFirstCorrectAnswer] = useState(false)
     const [SNR, setSNRArray] = useState([]);
     const getSNR=(idx)=> {return parseFloat(SNR.find((val, i) => i === idx));}
-    const setSNR=(idx, SNRvalue)=>{
-        // SNR[idx] = parseFloat(SNRvalue);
-        const tmpSNRList = [...SNR];
-        let newSNRval = tmpSNRList.find((val, i) => i === idx);
-        newSNRval = parseFloat(SNRvalue);
-        setSNRArray(tmpSNRList);
-    }
-
+    
     const detectReversal =(isCorrectAnswer, SNR)=> {
         let bReversal = false;
         let currentSNR = parseFloat(SNR);
@@ -809,10 +617,9 @@ function TestMainFrame ()  {
             if (((currentSNR > previousSNR) && isCorrectAnswer) || ((currentSNR < previousSNR) && !isCorrectAnswer)) {
     
                 // Update the reversals array with a value of 1 at current index
-                //setReversal(ixCurrentTriplet, 1);
-                // numberReversal++;
+                const oldReversalNum = numberReversal;
                 setNumberReversal((prevNumReversal) => prevNumReversal + 1);
-                
+                reversal.push(oldReversalNum+1);
                 // Set return value to true
                 bReversal = true;
             }
@@ -820,18 +627,13 @@ function TestMainFrame ()  {
         return bReversal;
     }
 
-    // const updateDBStep = (num) => { setDBStep((num)) };
     const [bFirstReversal, setbFirstReversal] = useState(false);
     const computeCurrentSNR =(isCorrectAnswer)=> {
 
         // Initialize the SNR to the value used just before we got here
         // var currentSNR = speechVolume - initialValues.maskerLevel;
     
-        // Set a temporary variable in case the maximum level is reached
-        let tmpSNR = currentSNR;
-    
         if (isCorrectAnswer && firstCorrectAnswer) {
-            
             // Set the SNR before reversal value when the first correct answer is entered
             setFirstCorrectAnswer(false);
         }
@@ -839,7 +641,6 @@ function TestMainFrame ()  {
         // Detect if a reversal was encountered
         const tmpFirstReversal = (bFirstReversal | detectReversal(isCorrectAnswer, currentSNR));
         setbFirstReversal(tmpFirstReversal);
-        // bFirstReversal |= detectReversal(isCorrectAnswer, tmpSNR);
     
         // Set the step size for the current and future iterations
         if (!tmpFirstReversal) {
@@ -855,10 +656,8 @@ function TestMainFrame ()  {
         if (isCorrectAnswer) {
             // Answer was correct, decrease SNR
             const oldSNR = currentSNR;
-            console.log("oldSNR= " + oldSNR)
             setCurrentSNR((prevSNR) => (oldSNR - tmpDBStep));
             var tmpCurrentSNR = oldSNR - tmpDBStep;
-            console.log("oldSNR = "+oldSNR +", tmpDbStep = " + tmpDBStep + ", oldSNR - tmpDBSTEP = " + tmpCurrentSNR)
             // Set the number of misses in a row back to zero
             setNMisses(0);
         } else {
@@ -871,18 +670,12 @@ function TestMainFrame ()  {
             var tmpCurrentSNR = oldSNR + tmpDBStep;
             console.log("oldSNR = "+oldSNR +", tmpDbStep = " + tmpDBStep + ", oldSNR + tmpDBSTEP = " + tmpCurrentSNR)
 
-    
             // Increment the number of misses in a row
             setNMisses(nmisses+1);
         }
     
         // Update the SNR array  with the new value we just compiled
-        // setSNR(ixCurrentTriplet, tmpCurrentSNR);
         SNR.push(parseFloat(tmpCurrentSNR));
-        // setSNR(ixCurrentTriplet, tmpCurrentSNR);
-        console.log("SNR ARRYA VALUE for ixTriplet #" + ixCurrentTriplet)
-        console.log(SNR)
-
         return tmpDBStep;
     }
 
@@ -892,11 +685,13 @@ function TestMainFrame ()  {
 
     const [showInstructionBtn, setInstructionBtnDisplay] = useState(false);
     const [showStartCDTT, setShowStartCDTT]=useState(false);
+
     const showInstructions=()=> {
         setInstructionBtnDisplay(!showInstructionBtn);
     }
 
     const [hidePracticeTest, setHidePracticeTest]=useState(false);
+
     const skipToTest=()=> {
         setHidePracticeTest(true);
         // Hide keypad
@@ -906,55 +701,32 @@ function TestMainFrame ()  {
     }
     const [startDateTime, setStartDateTime]=useState(null);
     const [disableStartBtn, setDisableStartBtn] = useState(false);
+
     const startTest=()=>{
-
         setDisableStartBtn(true); // Disable start button, enable stop button
-
         // Set the submit button value to 2
         setSubmitBtnTestVal(2);
-    
         // Start with the first triplet
         setIxCurrentTriplet(0);
-        // ixCurrentTriplet = 0;
-
         // Submit button won't be enabled until the next 
         // audio file is done playing 
         setbNotReadyForAnswer(true);
-
         setInitVal(initialValues.initialVolume);
-    
-        // Disable test parameters on the main frame
-        // disableTestParameters(true);
-        
         // Clear keyboard
         clearKeyboard();
-    
         // Return the current Date & Time
         setStartDateTime(new Date());
             
-        // Set for the speech value
-        // initialVolume = document.getElementById("speechCalib").value;
         setNumCorrectTriplet(0);
-        // numCorrectTriplet = 0;
-        //bNextTriplet = true;
         setFirstCorrectAnswer(true);
         setbCorrectAnswer(false);
-        // isCorrectAnswer = false;
-
         setbFirstReversal(false);
         setSRT(0.0);
         setSTDEV(0.0);
-        // setnumReversals(0);
-        // setNumberReversal(0);
-            
-        // Set progress
-        // setNProgress(0);
+        setReversalArray([]);
         testProgress = 0;
         setAudioIsOn(false);
-        // currentSNR = (document.getElementById("startingSNRrange").value);
-        // startingSNR = currentSNR;
         setCurrentSNR(0.0);
-        // dBStep = 0.0; 
         setDBStep(0.0);
         setNumberReversal(0);
     
@@ -963,19 +735,13 @@ function TestMainFrame ()  {
     
         // Show progress bar
         setHideTextProgress(false);
-        // document.getElementById("labelProgress").style.visibility = "visible";
         
         // Set the progress and progress status bar
         progress(ixCurrentTriplet);
         updateProgressStatusBar();
-    
-        // create a new class
-        // var cdtt = new CDTT(language, talker, list, masker, mode, testEar, speechLevel, maskerLevel, btestQuiet, tripletType);
         setEnableKeyboard(false);
-        // Make the keyboard visible
-        // CDTT.enableKeyboard("visible");
         show();
-        
+    
         // Get the list of wav files
         getListOfFile(initialValues.language, initialValues.talker, initialValues.list);
     } 
@@ -990,15 +756,12 @@ function TestMainFrame ()  {
 
         // Grab the data from the text area before updating the textfield 
         const target = event.target;
-
         const currentAnswer = target.value
-        // Get the current key code
-        // let key = event.key;
     
         // Update the text field and GUI buttons
         updateTextFieldKeyboard(currentAnswer);            
     }
-    
+
     
     return (
         <>
@@ -1129,17 +892,13 @@ function TestMainFrame ()  {
                         {/* <!-- Submit button --> */}
                         <td><center><button class="keyboardBtn btnSubmit" id="btnSubmitTest" onClick={keypadSubmitListener} disabled={(bDisableSubmit || bNotReadyForAnswer) || audioIsOn}><img src="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Script/Images/icon-enter.png" id="iconEnter" alt="Submit"/></button></center></td>
                     </tr>
-                </table>
-                
-                
+                </table>                
            </div>
 
            <div className="scoreLabel">
                 {/* <!-- Progress bar labels --> */}
                 <p id="labelProgress" hidden={hideTextProgress}>{textProgress}</p>
-           </div>
-
-             
+           </div>    
         </>
     );
 }

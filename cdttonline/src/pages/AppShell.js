@@ -6,7 +6,6 @@ export const AppShell=({ isLoggedIn, setIsLoggedIn, user })=>{
     return (
         <div>
             <NavBar isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} user={user} />
-
             <Outlet/>
         </div>
     )

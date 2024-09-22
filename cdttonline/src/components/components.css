@@ -301,6 +301,20 @@ input:invalid{
     margin: auto;
 }
 
+.subjectResultsInfo table, .subjectResultsInfo h5 {
+    text-align: center;
+    align-content: center;
+    margin: auto;
+}
+
+.testResults.info {
+    display: flex !important;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: center;
+}
+
 .termsAndConditions p, #speechCalibF p, #maskerCalibF p {
     font-size: 14px; 
     text-align: left;
@@ -478,6 +492,54 @@ MODALS
 /* Buttons hovered and enabled */
 .allowBtn:hover:enabled, .modalButton.okBtn:hover:enabled {
     background-color: #2d781b;
+}
+
+.loginPage { 
+    max-width: 600px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 20px;
+}
+
+.userNavBar {
+    display: flex;
+    align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+    /* .userNavBar, #secondNavBar {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+    } */
+
+    .secondNavBar {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    #navBarLanguage {
+        margin-right: 8px;
+    }
+
+    .secondNavBar .loginNavBar {
+        margin-left: 10px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .secondNavBar {
+        align-items: center;
+        margin-left: 20px;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        flex-direction: row;
+    }
+
+
 }
 
 /* Modal buttons */
@@ -718,13 +780,14 @@ MEDIA SCREEN
 }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 900px) {
     table.dataModalTable {
         display: flex;
         justify-content: space-between;
         flex-direction: column-reverse;
         flex-wrap: nowrap;
     }
+    
 }
 
 /***************************************************

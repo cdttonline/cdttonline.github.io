@@ -2,38 +2,13 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
 import I18N from "../I18N.json"
-
-// import { addDoc } from 'https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js';
-
 import ValidateFn from "../components/ValidationFn";
-import { Badge, Button } from "react-bootstrap";
+import { Badge } from "react-bootstrap";
 import "./print.css"
 import { resultsCollection } from "../Firebase";
 import { addDoc } from "firebase/firestore";
 
-
-// import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js';
-// import { getFirestore, collection, Timestamp } from 'https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js';
 const UserTestResults = () => {
-
-//     // Your web app's Firebase configuration
-// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-// const firebaseConfig = {
-//     apiKey: "AIzaSyDuKnaBoKS1M6sZVC5Nht4lfUJwCj9C9cY",
-//     authDomain: "cdtt-dc538.firebaseapp.com",
-//     projectId: "cdtt-dc538",
-//     storageBucket: "cdtt-dc538.appspot.com",
-//     messagingSenderId: "110118431025",
-//     appId: "1:110118431025:web:0a93184db381462d41e810",
-//     measurementId: "G-9M8V21CJ3J"
-// };
-
-// const firebaseApp = initializeApp(firebaseConfig);
-// const db = getFirestore(firebaseApp);
-
-
-// const resultsCollection = collection(db, 'Results');
-
     const { state } = useLocation();
     const navigate = useNavigate();
     const [hideSaveResultQ, setHideSaveResultQ] = useState(true);
@@ -65,8 +40,8 @@ const UserTestResults = () => {
         comment: '',
         termsChecked: false
     });
+
     var [characterLimit, setCharacterLimit] = useState(350)
-    var [termsChecked, setTermsChecked] = useState(false);
 
     useEffect(() => {
         setResults({
@@ -90,7 +65,6 @@ const UserTestResults = () => {
             userAnswer: state.userAnswer,
             completedTriplet: state.completedTriplet
         });
-        console.log(state)
 
         if (state.language == "EN_CA") {
             setLanguageLabel("English");
@@ -103,18 +77,12 @@ const UserTestResults = () => {
     }, [])
 
     const [resultScore, setResultScore] = useState('');
-    const handlePrint = () => {
-        window.print();
-    }
-
-    const navigateToMainWindow = () => {
-        navigate("/");
-    }
+    
+    const handlePrint = () => { window.print(); }
+    const navigateToMainWindow = () => { navigate("/"); }
 
     const displayExtraSection = () => {
         setHideSaveResultQ(false); // hide save result question
-
-
     }
 
     const handleInputChange = (event) => {
@@ -129,84 +97,32 @@ const UserTestResults = () => {
             console.log(value)
         }
     } 
-    const [formDataError, setFormDataError] = useState([]);
 
+    const [formDataError, setFormDataError] = useState([]);
     const [dateAndTime, setDateAndTime] = useState('');
+
     const submitResults = async (e) => {
         e.preventDefault();
         const validationResult = ValidateFn.validateTestUserResults(results);
         setFormDataError(validationResult);
 
-        // if (!chckbxTerms.checked) {
-        // if (!termsChecked) {
-
-        // } else 
-            
-        //     // Do not continue
-        //     // Show error!
-        //     error.style.display = "block";
-        //     chckbxTerms.style.color = "red";
-    
-        //     // Red border color for the Results Frame
-        //     extraResultsFrame.style.border = "4px solid red";
-            
-        //     // Cannot submit! Change color of checkbox border to let the user know
-        //     chckbxTerms.style.outline = "2px solid #ff2851";
         let flag = false;
-
         for (let i = 0; i < validationResult.length; i++) {
-        if (validationResult[i] != "") {
-            flag = true;
-        }
+            if (validationResult[i] != "") {
+                flag = true;
+            }
         }
 
         if (flag == true) {
         console.log("there are still errors to fix");
         } else {
-            // Access results from results file and store them in Firebase
-            // var language = document.getElementById("resultLanguage").innerHTML;
-            // var talker = document.getElementById("resultTalker").innerHTML;
-            // var list = document.getElementById("resultListNumber").innerHTML;
-            // var mode = document.getElementById("resultMode").innerHTML;
-            // var tripletType = document.getElementById("resultTripletType").innerHTML;
-            // var testEar = document.getElementById("resultTestEar").innerHTML;
-            // var masker = document.getElementById("resultMasker").innerHTML;
-            // var startingSNR = document.getElementById("resultStartingSNR").innerHTML;
-            // var srt = document.getElementById("resultSRT").innerHTML;
-            // var stDev = document.getElementById("resultStDev").innerHTML;
-            // var numReversals = document.getElementById("resultReversals").innerHTML;
-            // var date_time = document.getElementById("resultDateTime").innerHTML;
-    
-            // var age = document.getElementById("age").value + "";
-            // var languageProficiency = document.getElementById("languageProficiencyDropDownList").value + "";
-            // var hearing = document.getElementById("hearingDropDownList").value + "";
-            // var ear = document.getElementById("hearing2DropDownList").value + "";
-            // var dominantLanguage = document.getElementById("dominantLanguageTextBox").value + "";
-            // var comments = document.getElementById("comments").value + "";
-            
-            //create object
             getResultsExtendedResults();
-            // var firebase = new Results(language, talker, list, mode, tripletType, testEar, masker, startingSNR, srt, stDev, numReversals, date_time, age, languageProficiency, hearing, ear, dominantLanguage, comments, resultsTripletList); //stimTripletList, userTripletList);
             addNewDocument();
-            // ModalResults.displayExtraSection(false);
-            // ModalResults.clearQuestions();
-    
-            // // Delete extended results table
-            // ModalResults.deleteExtendedResultsTable();
-            
-            // document.getElementById("showResultsModal").style.display = "none";
-            
-            // // Show the next modal to let the user know the answer was submitted succesfully
-            // loadNextPage();
-            // navigate back to the main page
-            // navigate("/");
-            
         }
     }
 
     const addNewDocument = () => {
         addDoc(resultsCollection, {
-
             adaptiveTest: {
                 reversals: results.numberReversal,
                 srt: results.SRT,
@@ -237,9 +153,6 @@ const UserTestResults = () => {
     const [resultsTripletList, setresultsTripletList] = useState([]);
     const getResultsExtendedResults = () => {
         // Get Results
-        // Try to obtain the table
-        const table = document.getElementById("tableExtendedResults"); 
-        console.log("num of triplet = " + results.numberTriplets)
         let score = 0;
         for (let idx = 0; idx < results.numberTriplets; idx++) {
             const stimulus = results.correctAnswer.find((val, i) => i === idx);
@@ -254,36 +167,6 @@ const UserTestResults = () => {
         }
         const overallScore = (score + "/" + results.numberTriplets);
         setResultScore(overallScore);
-        // let tmpStimList = [];
-        // let tmpUserList = [];
-        // if (table.className == "tableExtendedResults") { // element found
-        //     // ROW: Start at row 1 because we don't want the headers
-        //     // CELL: Start at cell 1 because we don't want to include the triplet number
-        //     //       Append the cells values 
-        //     for (let i=1; i<4; i++) {
-        //         let cell = table.rows[i].cells;
-        //         for (let j=1; j<7; j++) {
-        //             // Append the cells for the stimTriplet list
-        //             if (j < 4) {
-        //                 tmpStimList[j-1] = cell[j].innerHTML;
-        //             }
-    
-        //             // Append the cells for the userTriplet list
-        //             if (j > 3) {
-        //                 tmpUserList[j-4] = cell[j].innerHTML;
-        //             }
-        //         }
-
-        //         const triplet = ("Stimulus: " + tmpStimList.join("") + "\t|\tUser: " + tmpUserList.join(""));
-        //         resultsTripletList.push(triplet);
-        //         console.log("triplet in extnded res: " + triplet);
-        //         console.log(resultsTripletList)
-        //         // resultsTripletList[i-1] = "Stimulus: " + tmpStimList.join("") + "\t|\tUser: " + tmpUserList.join("");
-        //     } 
-    
-        // } else {
-        //     console.log("table NOT found!");  
-        // }
     }
 
     const handleCheckChange = (event) => {
@@ -301,16 +184,9 @@ const UserTestResults = () => {
     }
 
     return (
-        // <div id="showResultsModal" class="modal showResults" hidden={hideResultModal}> 
         <div>                
-            {/* <!-- x button to close modal --> */}
-            {/* <span class="close" onclick="ModalResults.closeResultsModal('showResultsModal')">x</span> */}
-            
-            {/* <!-- Modal content --> */}
             <div>
-            {/* <div class="modal-content" style={{opacity: "1"}} id="contentResultsModal"> */}
                 <div class="container" id="showResultsContainer">
-                    
                     {/* <!-- Printing option, will print the results page --> */}
                     <table className="tableModal_btn">
                         {/* <!-- Handle a print button --> */}
@@ -430,15 +306,11 @@ const UserTestResults = () => {
                         <p>Do you allow your results to be saved anonymously for research purpose in the CDTT database?</p>       
                         
                         <div class="clearfix">
-                            
                             {/* <!-- Do not show extra section and go back to main page button --> */}
-                            {/* <button type="button" onClick={navigateToMainWindow} class="modalButton cancelbtn">Cancel</button> */}
                             <button type="button" onClick={navigateToMainWindow} className="cancelbtn">Cancel</button>
                             
                             {/* <!-- Show extra section button --> */}
-                            {/* <button type="button" onClick={displayExtraSection} class="modalButton allowBtn">Allow</button> */}
                             <button type="button" onClick={displayExtraSection} className="allowBtn">Allow</button>
-
                         </div>
                     </div>
                     

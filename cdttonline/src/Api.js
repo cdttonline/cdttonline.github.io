@@ -10,14 +10,9 @@ const getResultsFromDataBase = async() => {
     try {
         const querySnapshot = await getDocs(resultsCollection);
         querySnapshot.forEach((doc) => {
-            // console.log(doc.id, " => ", doc.data());
             res.id.push(doc.id);
             res.data.push(doc.data());
-            
-            // res.push(doc.data());
         })
-        // console.log(querySnapshot.docs)
-        // res = querySnapshot;
     } catch (e) {
         console.log("Error occures", e);
     }
@@ -32,14 +27,9 @@ const getUsersFromDataBase = async() => {
     try {
         const querySnapshot = await getDocs(usersCollection);
         querySnapshot.forEach((doc) => {
-            // console.log(doc.id, " => ", doc.data());
             res.id.push(doc.id);
             res.data.push(doc.data());
-            
-            // res.push(doc.data());
-        })
-        // console.log(querySnapshot.docs)
-        // res = querySnapshot;
+        });
     } catch (e) {
         console.log("Error occures", e);
     }
@@ -48,11 +38,8 @@ const getUsersFromDataBase = async() => {
 
 export const exportTableToExcel = (table) => {
     // Get the table HTML
-    // const table = document.getElementById('my-table');
     if (!table) return;
-
     const tableHTML = table.outerHTML.replace(/ /g, '%20');
-
     // Specify the data type
     const dataType = 'application/vnd.ms-excel';
 

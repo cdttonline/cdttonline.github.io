@@ -1,5 +1,5 @@
 import React from "react";
-// import CDTT from "./CDTT";
+
 /**
  * @class PracticeTest
  * 
@@ -53,11 +53,7 @@ class PracticeTest extends React.Component {
      * @param {Number} list 
      */
     showList(list) {
-        let tmp = this.getRandomList(list);
-        
-        // Get the file
-        // CDTT.getListOfFile(this.language, this.talker, tmp);
-        
+        let tmp = this.getRandomList(list);        
     }
 }
 

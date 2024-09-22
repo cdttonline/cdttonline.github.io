@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Table } from "react-bootstrap";
 import "../print.css"
 import { exportTableToExcel } from "../Api";
@@ -24,6 +24,10 @@ export function DataModal ({ modalInfo, showModal, handleCloseModal, resultsId})
         //   saveAs(blob, `${resultsId}.xlsx`);
         // };
     //   }
+
+    useEffect(() => {
+        console.log(modalInfo)
+    },[])
 
     const splitString = (myString) => {
         // const myString = 'Stimulus: 254 | User: 514';
@@ -72,19 +76,24 @@ export function DataModal ({ modalInfo, showModal, handleCloseModal, resultsId})
                             <h6 className="mb-2">Score: {modalInfo.score}</h6>
                             <h6>Performed on {modalInfo.dateAndTime}</h6>
                         </td>
-                        <button type="button" class="printBtn" id="printBtn" onClick={handleExport}> <span class="glyphicon" style={{marginRight: "5px"}}>&#x1f5b6;</span>Export Data</button>
         {/* {exportData && <ExportToCSV data={modalInfo} resultsId={resultsId} /> } */}
         {/* {exportData ? <ExportToCSV /> : <></>} */}
-                        
-                        <td></td>
+                        <td>
+                        <td>
+                        <button type="button" class="printBtn" id="printBtn" onClick={handleExport}> <span class="glyphicon" style={{marginRight: "5px"}}>&#x1f5b6;</span>Export Data</button>
+
+                        </td>
                         <td>
                             <button type="button" class="printBtn" id="printBtn" onClick={handlePrint}> <span class="glyphicon" style={{marginRight: "5px"}}>&#x1f5b6;</span>Print</button>
                         </td>
+                        </td>
+                        
                     </table>
 
                     
                     <hr style={{borderColor: "#6c757d"}}/>
-                    <div className="dataModalResults">
+                    <div className="testResults info d-flex">
+                        <td>
                         <h5>Basic Information</h5>
                         <Table className="table w-auto mb-3" responsive>
                             <tbody> 
@@ -114,7 +123,9 @@ export function DataModal ({ modalInfo, showModal, handleCloseModal, resultsId})
                                 </tr>                        
                             </tbody>
                         </Table>
-                        
+                        </td>
+
+                        <td>
                         <h5>Adaptive Results</h5>
                         <Table className="table w-auto mb-3" responsive>
                             <tbody>
@@ -124,15 +135,51 @@ export function DataModal ({ modalInfo, showModal, handleCloseModal, resultsId})
                                 </tr>
                                 <tr>
                                     <th>SRT</th>
-                                    <td>{modalInfo.adaptiveTest.srt}</td>
+                                    <td>{parseFloat(modalInfo.adaptiveTest.srt).toFixed(2)}</td>
                                 </tr>
                                 <tr>
                                     <th>St. Dev.</th>
-                                    <td>{modalInfo.adaptiveTest.stDev}</td>
+                                    <td>{parseFloat(modalInfo.adaptiveTest.stDev).toFixed(2)}</td>
                                 </tr>                
                             </tbody>
                         </Table>
+                        </td>
+                    </div>
 
+                    <div className="subjectResultsInfo">
+                        <h5>Subject Info</h5>
+                        <Table className="table w-auto mb-3" responsive>
+                            <tbody>
+                                <tr>
+                                    <th>Age</th>
+                                    <td>{modalInfo.subject.age == "" ? 'N/A' : modalInfo.subject.age}</td>
+                                    <th>Language Proficiency</th>
+                                    <td>{modalInfo.subject.languageProficiency == "" ? 'N/A' : modalInfo.subject.languageProficiency}</td>
+                                    
+                                </tr>
+                                <tr>
+                                    <th>Better Ear</th>
+                                    <td>{modalInfo.subject.betterEar == "" ? 'N/A' : modalInfo.subject.betterEar}</td>
+                                    <th>Hearing</th>
+                                    <td>{modalInfo.subject.hearing == "" ? 'N/A' : modalInfo.subject.hearing}</td>
+                                </tr>
+                                <tr>
+                                    <th>Dominant Language</th>
+                                    <td>{modalInfo.subject.dominantLanguage == "" ? 'N/A' : modalInfo.subject.dominantLanguage}</td>
+                                    <th></th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>Comments</th>
+                                    <td colSpan={3}>{modalInfo.subject.comments == "" ? 'N/A' : modalInfo.subject.comments}</td>
+                                </tr>
+                                <tr>
+                                    
+                                </tr>
+                            </tbody>
+                        </Table>
+                    </div>
+                    <div className="dataModalResults">
                         <h5>Extended Results</h5>
                         {/* <Table className="table-bordered w-auto mb-5" responsive>
                             <thead>

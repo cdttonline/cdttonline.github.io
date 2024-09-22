@@ -10,7 +10,8 @@ a.nav-link:hover {
 }
 
 a.nav-link.active {
-    color: #3f48cc !important;
+    color: #000000A6 !important;
+    /* color: #3f48cc !important; */
 }
 
 .navbar-brand {

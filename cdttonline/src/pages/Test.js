@@ -5,7 +5,7 @@ const Test = () => {
     return (
         <>
             <Container>
-                <h1>DTT</h1>
+                <h1 className="mt-3">DTT</h1>
                 <TestParameters/>
             </Container>
         

@@ -343,7 +343,7 @@ export const TestParameters=()=> {
                 </Modal.Header>
                 <Modal.Body>
                     <p>Please make sure to adjust your device's volume so that you can hear the noise without it being too loud.</p>
-                    <p id="maskerValueCalib">Masker volume is set to : {calibration.noise}</p>
+                    <p id="maskerValueCalib">The current masker volume is set to : {calibration.noise}</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <button type="button" id="doneMaskerCalib" onClick={handleCloseModal}>Continue</button>
