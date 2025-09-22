@@ -1,0 +1,84 @@
+{
+  "navbar_title": {
+    "about": "About",
+    "research_platform": "Research Platform",
+    "test": "Online Testing",
+    "contact": "Contacts",
+    "data_sub_title": {
+      "data": "Data",
+      "results": "Test Results",
+      "internal_calibration": "Internal Calibration"
+    },
+    "users": "Users",
+    "profile": "Profile",
+    "logout": "Logout",
+    "login": "Login",
+    "language": "FR",
+    "rights": "© 2025 Canadian Digit Triplet Test, <i>University of Ottawa.</i> All Rights Reserved."
+  },
+  "about": {
+    "paragraph_1": "The Canadian Digit Triplet Test (CDTT) is a hearing screening tool developed by a team of researchers at the University of Ottawa and the University of Toronto. The test uses an adaptive procedure to determine the speech recognition threshold (SRT) for digit triplets in noise. The CDTT follows the guidelines of the International Collegium of Rehabilitative Audiology (<icraLink>ICRA</icraLink>) for the construction of <multilangualSpeechLink>multilingual speech tests</multilangualSpeechLink>.",
+    "link_1_title": "Feature article in Canadian Audiologist",
+    "link_2_title": "Test development article in JASA Express Letters",
+    "paragraph_2": {
+      "before_link_1": "The CDTT was first made available for testing in the two official languages of Canada, English and French, using digits from a bilingual male and a bilingual female presented in speech-spectrum noise. The test has been included in two large-scale multi-site national studies, the ",
+      "link_1_title": "Canadian Consortium on Neurodegeneration in Aging",
+      "between_link_1_and_link_2": " and the ",
+      "link_2_title": "Canadian Longitudinal Study on Aging",
+      "after_link_2": ", and made available to other researchers. Additional language modules have been developed in Asante-Twi and Ghanaian English."
+    },
+    "bullet_pts_1": "The <goToLink>research software platform</goToLink> is the most comprehensive version of the CDTT. It provides complete control over the test parameters and allows for the easy integration of new language/talker modules and additional user-defined noise maskers. Researchers can apply for a non-commercial software license for academic and research purposes.",
+    "bullet_pts_2": "An <goToLink>online version</goToLink> is available for demonstration purposes."
+  },
+  "research_platform": {
+    "section_1": {
+      "title": "Software and hardware considerations",
+      "paragraph_1": "The CDTT software was developed as a cross-platform Java application and it can be run on different operating systems (e.g., Windows, macOS).",
+      "bullet_pts": {
+        "1": "The main interface provides controls for the test operator to enter participant information, select test parameters, run a test, and save the results in MS-Excel.",
+        "2": "Participants enter their digit responses on-screen or using an external USB numeric keypad.",
+        "3": "Use of an external USB sound card (e.g., E10K Olympus 2 by FiiO) is recommend for portability and reproducibility across computers.",
+        "4": "Results have been found to be largely insensitive to the choice of earphones, but use of Radioear DD45 audiometric earphones is recommended for strict comparison to the ",
+        "5": "Results obtained to date suggest that hearing screening with the CDTT can be administered with supra-aural earphones (Radioear DD45 or similar) on testing sites with background noise levels not exceeding 60 dBA, while the use of sound-attenuating circumaural earphones (Radioear DD450 or similar) should be considered on testing sites with background noise levels up to 75 dBA."
+      },
+      "bullet_pts_4_link": "CDTT normative data"
+    },
+    "section_2": {
+      "title": "Software and hardware considerations",
+      "bullet_pts": {
+        "1": "Testing languages: Canadian English and French (2016), Asante-Twi and Ghanaian English (2023)",
+        "2": "Talkers: one or two talkers (male and female) per language/dialect",
+        "3": "Digits: diotic (in-phase) or dichotic (antiphase) presentation",
+        "4": "Maskers: Talker-specific speech spectrum noise (default) and user-defined noises",
+        "5": "Test modes: Adaptative speech-recognition threshold search (SRT) or fixed signal-to-noise ratio (SNR)"
+      }
+    },
+    "section_3": {
+      "title": "User manual (upcoming)"
+    },
+    "section_4": {
+      "title": "Video demonstration (upcoming)"
+    },
+    "section_5": {
+      "title": "Availability",
+      "paragraph_1": "Researchers can apply for a non-commercial software license for academic and research purposes. Please fill in <formLink>this form</formLink> and send by email to one of the <contactLink>Principal Investigators</contactLink>"
+    }
+  },
+  "contact": {
+    "section_1": {
+      "title": "Principal investigators",
+      "name_1": "Christian Giguère (University of Ottawa) - Email: ",
+      "email_1": "cgiguere@uottawa.ca",
+      "name_2": "Josée Lagacé (University of Ottawa) - Email: ",
+      "email_2": "jlagace@uottawa.ca",
+      "name_3": "Kathleen Pichora-Fuller (University of Toronto Mississauga) – Email: ",
+      "email_3": "k.pichora.fuller@utoronto.ca"
+    },
+    "section_2": {
+      "title": "Software development",
+      "name_1": "Nicolas N. Ellaham (University of Ottawa)",
+      "name_2": "Mélina Rochon (University of Ottawa)"
+    },
+    "rights": "The rights to the Canadian Digit Triplet Test (CDTT) are owned by the University of Ottawa."
+  }
+}
