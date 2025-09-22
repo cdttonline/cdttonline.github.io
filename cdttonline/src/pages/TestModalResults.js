@@ -3,8 +3,8 @@ import { processUserAnswer } from "../components/Table";
 import { useNavigate } from "react-router-dom";
 import { Button, Modal } from "react-bootstrap";
 
-const TestModalResults =({ language, talker, list, mode, tripletType, testEar, masker, startingSNR, SRT, STDEV, 
-    numberReversal, testDate, testDuration, startTestTime, numberTriplets, correctAnswer, userAnswerSubmit, completedTriplet })=> {
+const TestModalResults =({ language, talker, list, mode, tripletType, testEar, masker, startingSNR, speech, noise, SRT, STDEV,
+    numberReversal, testDate, testDuration, startTestTime, numberTriplets, correctAnswer, userAnswerSubmit, completedTriplet, SNRarray })=> {
     
     const [hideResultModal, setHideResultModal] = useState(true);
     const [hideModalAskViewResults, setHideModalAskViewResults] = useState(false);
@@ -22,6 +22,8 @@ const TestModalResults =({ language, talker, list, mode, tripletType, testEar, m
                 testEar: testEar,
                 masker: masker,
                 startingSNR: startingSNR,
+                speech: speech,
+                noise: noise,
                 SRT: SRT,
                 STDEV: STDEV,
                 numberReversal: numberReversal,
@@ -31,7 +33,8 @@ const TestModalResults =({ language, talker, list, mode, tripletType, testEar, m
                 numberTriplets: numberTriplets,
                 correctAnswer: correctAnswer,
                 userAnswer: tmpUserAnswerArray,
-                completedTriplet: completedTriplet
+                completedTriplet: completedTriplet,
+                SNRarray: SNRarray
             }
         })
     }

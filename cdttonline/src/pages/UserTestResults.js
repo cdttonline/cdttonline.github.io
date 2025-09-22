@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Table from "../components/Table";
 import I18N from "../I18N.json"
 import ValidateFn from "../components/ValidationFn";
 import { Badge } from "react-bootstrap";
 import "./print.css"
-import { resultsCollection } from "../Firebase";
+import { resultsCollection } from "../firebase/Firebase";
 import { addDoc } from "firebase/firestore";
+import TableContainer from "../components/TableContainer";
 
 const UserTestResults = () => {
     const { state } = useLocation();
@@ -14,24 +15,26 @@ const UserTestResults = () => {
     const [hideSaveResultQ, setHideSaveResultQ] = useState(true);
     const [languageLabel, setLanguageLabel] = useState('');
     const [results, setResults] = useState({
-        language: "",
-        talker: "",
-        list: "",
-        mode: "",
-        tripletType: "",
-        testEar: "",
-        masker: "",
-        startingSNR: "",
-        SRT: "",
-        STDEV: "",
-        numberReversal: "",
-        testDate: "",
-        testDuration: "",
-        startTestTime: "",
-        numberTriplets: "",
-        correctAnswer: [],
-        userAnswer: [],
-        completedTriplet: "",
+        language: state.language,
+        talker: state.talker,
+        list: state.list,
+        mode: state.mode,
+        tripletType: state.tripletType,
+        testEar: state.testEar,
+        masker: state.masker,
+        startingSNR: state.startingSNR,
+        speech: state.speech,
+        noise: state.noise,
+        SRT: state.SRT.toFixed(2),
+        STDEV: state.STDEV.toFixed(2),
+        numberReversal: state.numberReversal,
+        testDate: state.testDate,
+        testDuration: state.testDuration,
+        startTestTime: state.startTestTime,
+        numberTriplets: state.numberTriplets,
+        correctAnswer: state.correctAnswer,
+        userAnswer: state.userAnswer,
+        completedTriplet: state.completedTriplet,
         languageProficiency: '',
         age: '',
         hearing1: '',
@@ -44,27 +47,27 @@ const UserTestResults = () => {
     var [characterLimit, setCharacterLimit] = useState(350)
 
     useEffect(() => {
-        setResults({
-            ...results,
-            language: state.language,
-            talker: state.talker,
-            list: state.list,
-            mode: state.mode,
-            tripletType: state.tripletType,
-            testEar: state.testEar,
-            masker: state.masker,
-            startingSNR: state.startingSNR,
-            SRT: state.SRT,
-            STDEV: state.STDEV,
-            numberReversal: state.numberReversal,
-            testDate: state.testDate,
-            testDuration: state.testDuration,
-            startTestTime: state.startTestTime,
-            numberTriplets: state.numberTriplets,
-            correctAnswer: state.correctAnswer,
-            userAnswer: state.userAnswer,
-            completedTriplet: state.completedTriplet
-        });
+        // setResults({
+        //     ...results,
+        //     language: state.language,
+        //     talker: state.talker,
+        //     list: state.list,
+        //     mode: state.mode,
+        //     tripletType: state.tripletType,
+        //     testEar: state.testEar,
+        //     masker: state.masker,
+        //     startingSNR: state.startingSNR,
+        //     SRT: state.SRT.toFixed(2),
+        //     STDEV: state.STDEV.toFixed(2),
+        //     numberReversal: state.numberReversal,
+        //     testDate: state.testDate,
+        //     testDuration: state.testDuration,
+        //     startTestTime: state.startTestTime,
+        //     numberTriplets: state.numberTriplets,
+        //     correctAnswer: state.correctAnswer,
+        //     userAnswer: state.userAnswer,
+        //     completedTriplet: state.completedTriplet
+        // });
 
         if (state.language == "EN_CA") {
             setLanguageLabel("English");
@@ -72,8 +75,12 @@ const UserTestResults = () => {
             setLanguageLabel("French");
         }
 
+
+
         const tmpDateAndTime = (state.testDate + ", " + state.startTestTime + " | " + state.testDuration);
         setDateAndTime(tmpDateAndTime);
+
+
     }, [])
 
     const [resultScore, setResultScore] = useState('');
@@ -89,7 +96,7 @@ const UserTestResults = () => {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        if ( name == "age" ) {
+        if ( name === "age" ) {
             const newValue = event.target.value.replace(/\D/, "");
             setResults({ ...results, [name]: newValue });
         } else {
@@ -114,10 +121,11 @@ const UserTestResults = () => {
         }
 
         if (flag == true) {
-        console.log("there are still errors to fix");
+            console.log("there are still errors to fix");
         } else {
             getResultsExtendedResults();
             addNewDocument();
+            navigateToMainWindow();
         }
     }
 
@@ -134,6 +142,8 @@ const UserTestResults = () => {
             masker: results.masker,
             mode: results.mode,
             startingSNR: results.startingSNR,
+            speech: results.speech,
+            noise: results.noise,
             subject: {
                 age: results.age,
                 hearing: results.hearing1,
@@ -146,7 +156,8 @@ const UserTestResults = () => {
             testEar: results.testEar,
             tripletType: results.tripletType,
             extendedResults: resultsTripletList,
-            score: resultScore
+            score: resultScore,
+            SNRarray: state.SNRarray
         });
     }
 
@@ -162,7 +173,7 @@ const UserTestResults = () => {
                 score++;
             }
             resultsTripletList.push(triplet);
-            console.log("triplet in extnded res: " + triplet);
+            console.log("triplet in extended res: " + triplet);
             console.log(resultsTripletList)
         }
         const overallScore = (score + "/" + results.numberTriplets);
@@ -182,6 +193,8 @@ const UserTestResults = () => {
             termsChecked: !prevTermsCheck
         });
     }
+
+    const [seeExtResults, setSeeExtResults] = useState(false);
 
     return (
         <div>                
@@ -229,17 +242,17 @@ const UserTestResults = () => {
                                 the program to change the audio files' volume, like IOS, then the test
                                 mode will be Fixed --> */}
                             <tr>
-                                <th class="results">Mode:</th>
+                                <th class="results">Test Mode:</th>
                                 <td class="results" id="resultMode">{results.mode}</td>
                             </tr>
                             {/* <!-- Row 6: Test triplet type --> */}
                             <tr>
-                                <th class="results">Triplet Type:</th>
+                                <th class="results">Scoring:</th>
                                 <td class="results" id="resultTripletType">{results.tripletType}</td>
                             </tr>
                             {/* <!-- Row 7: Test ear --> */}
                             <tr>
-                                <th class="results">Test Ear:</th>
+                                <th class="results">Test Condition:</th>
                                 <td class="results" id="resultTestEar">{results.testEar}</td>
                             </tr>
                             {/* <!-- Row 8: Masker file used (Always SSNOISE) --> */}
@@ -288,9 +301,11 @@ const UserTestResults = () => {
                         
                         {/* <!-- Extended Results subtite --> */}
                         <h4>Extended Results</h4>
+                        <button type="button" onClick={() =>setSeeExtResults(true)} hidden={seeExtResults}>View</button>
+                        <button type="button" onClick={() => setSeeExtResults(false)} hidden={!seeExtResults}>Hide</button>
 
-                        <table id="tableExtendedResults" className="tableExtendedResults border-black">
-                            <Table correctAnswer={results.correctAnswer} userAnswer={results.userAnswer}/>
+                        <table id="tableExtendedResults" hidden={!seeExtResults} className="tableExtendedResults border-black">
+                            <Table correctAnswer={results.correctAnswer} userAnswer={results.userAnswer} SNRarray={state.SNRarray}/>
                         </table>
 
                     </div>
@@ -298,7 +313,7 @@ const UserTestResults = () => {
                     {/* <!-- Leave some space between the end of the table and the 
                         next section --> */}
                     <br/>
-                    <br/>
+                    {/* <br/> */}
 
                     {/* <!-- Ask if user wants to save results or not --> */}
                     <div class="saveResultsQ">

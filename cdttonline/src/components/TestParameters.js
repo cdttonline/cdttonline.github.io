@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import I18N from "../I18N.json"
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import services from "./services";
+import {doc, getDoc} from "firebase/firestore";
+import {internalCalibrationCollection} from "../firebase/Firebase";
 
 export const TestParameters=()=> {
     
@@ -22,21 +25,111 @@ export const TestParameters=()=> {
     });
 
     const [calibration, setCalibration] = useState({
-        speech: 0.500,
+        speech: 0.0,
         sliderMasker: 0.5,
-        noise: 0.5,
+        noise: 0.0,
         volume: "",
-        maskerValueCalib: ""
+        maskerValueCalib: "",
+        startingSNR: 0.0
     });
 
     useEffect(() => {
+        const fetchData = async () => {
+            // const collectionRef = collection(db, 'calibrations');
+            const docRef = doc(internalCalibrationCollection, 'InternalCalibration');
+
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    // Set state with loaded values
+                    setCalibration({...calibration,
+                        noise: data.noise ?? 0.5,
+                        speech: data.speech ?? 0.5,
+                        startingSNR: data.startingSNR ?? 0.0
+                    })
+                } else {
+                    console.log("Document doesn't exist yet.");
+                }
+            } catch (error) {
+                console.error('Error fetching document:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const [languageList, setLanguageList] = useState([]);
+    // useEffect(() => {
+        // console.log("getting the different languages from github");
+        // fetch('https://api.github.com/repos/MelinaRochon/CDTT_lists/contents/')
+        //     .then((res) => {
+        //         res.json().then((list) => {
+        //             list.forEach((data) => {
+        //                 console.log(data)
+        //                 let nameFolder = data.name;
+        //                 const paramArray = nameFolder.split("-");
+        //                 const findLanguage = languageList.find((val, idx) => { val == paramArray[0] });
+        //                 if (findLanguage == undefined) {
+        //                     // Langue ne se trouve pas
+        //                     languageList.push(paramArray[0]);
+        //                 }
+        //             })
+        //         })
+        // })
+            // var wavFile = new XMLHttpRequest();
+            
+            // wavFile.open('GET','https://api.github.com/repos/MelinaRochon/CDTT_lists/contents/' , 
+            //     true)
+            //     wavFile.onload = function() {
+            //         var data = JSON.parse(this.response);
+                    
+            //         // set the number of lists
+            //         for (let i=0; i<data.length; i++) {
+                        
+            //             // Check if the name of the Triplet corresponds to any
+            //             // of the list name
+            //             // ex. Triplet_List-01-EN_CA-Female
+            //             let nameFolder = data[i].name;
+            //             const paramArray = nameFolder.split("-");
+            //             // Array: [Language, Talker]
+                        
+            //             // Check if all the parameters of the folder correspond to the ones selected by the user
+            //             if ((paramArray[0] == language) && (paramArray[1] == talker)){
+            //                 // Found list
+            //                 // Returns the path of folder to access it later on
+            //                 getCorrectFile(data[i].url, list)
+            //             }
+                        
+            //             // for debugging purpose
+            //             // console.log(tempName);
+            //             // console.log(paramArray);
+            //             // console.log(data);
+            //         }
+            //     }
+            //     wavFile.send();
+        // }
+    // , [])
+
+    useEffect(() => {
+        const randomIndex = Math.floor(Math.random() * I18N.list.length);
+        console.log("random index is: " + randomIndex)
+        console.log("list length is: " + I18N.list.length)
+        setSelectedIndex(I18N.list[randomIndex]);
+        parameters.list = I18N.list.find((val, idx) => idx === randomIndex);
+    }, [I18N.list]);
+
+    useEffect(() => {
+
+        // const randomIndex = Math.floor(Math.random() * I18N.list.length);
+        // setSelectedIndex(I18N.list[randomIndex]);
         parameters.language = I18N.language.find((val, idx) => idx === 0);
         parameters.talker = I18N.talker.find((val, idx) => idx === 0);
-        parameters.list = I18N.list.find((val, idx) => idx === 0);
+        // parameters.list = I18N.list.find((val, idx) => idx === I18N.list[randomIndex]);
         parameters.tripletType = I18N.tripletType.find((val, idx) => idx === 0);
         parameters.masker = I18N.masker;
         parameters.testMode = I18N.testMode;
-        parameters.testEar = I18N.testEar;
+        parameters.testEar = I18N.testEar.find((val, idx) => idx === 0);;
         parameters.isTestInQuiet = false;
     }, [])
     const audioRef = React.useRef(null);
@@ -48,15 +141,44 @@ export const TestParameters=()=> {
         const value = target.value;
         const name = target.name;
 
-        if (name == "snr") {
+        if (name === "snr") {
             console.log(value + ".0 db")
-            parameters.startingSNR = value
-            calibration.speech = startingSpeechValue (parameters.startingSNR, calibration.sliderMasker)
+            // parameters.startingSNR = value
+            calibration.startingSNR = value
+
+            calibration.speech = startingSpeechValue(parameters.startingSNR, calibration.sliderMasker)
             audioRef.current.volume = calibration.noise;
+            document.getElementById("talkerDropDownList").disabled = false;
+        } else if (name === "language" && (value !== "EN_GH" && value !== "TWI_GH")) {
+            const listDropDown = document.getElementById("listDropDownList");
+
+            // Add the fourth element of the dropdown list (04) using innerHTML only if
+            // element is not already an element of the list
+            if (listDropDown.options.length === 3) {
+                listDropDown.innerHTML += '<option key="3">04</option>';
+            }
+            document.getElementById("talkerDropDownList").disabled = false;
+        } else if (name === "language" && (value === "TWI_GH" || value === "EN_GH") ) {
+            // Only female talker. No male talker.
+            parameters.talker = 'Female';
+            document.getElementById("talkerDropDownList").value = "Female"
+            document.getElementById("talkerDropDownList").disabled = true;
+
+            // Only 3 lists (01, 02, 03) available
+            document.getElementById("listDropDownList").remove(3);
+
+            // Generate new random list value between list values of: '01', '02' and '03'
+            if (parameters.list === "04") {
+                const randomIndex = Math.floor(Math.random() * (I18N.list.length - 1));
+                console.log("Ghana: random index is: " + randomIndex)
+                console.log("ghana: list length is: " + (I18N.list.length - 1))
+                setSelectedIndex(I18N.list[randomIndex]);
+                parameters.list = I18N.list.find((val, idx) => idx === randomIndex);
+            }
         }
         setParameters({ ...parameters, [name]: value})
 
-        console.log(value)
+        console.log(value);
     } 
 
     const startingSpeechValue = (SNRval, masker) => {
@@ -70,72 +192,11 @@ export const TestParameters=()=> {
             console.log("slide masker: = " + calibration.sliderMasker)
 
             // Recall the function until the speech is lower than 1.0
-            return startingSpeechValue(parameters.startingSNR, calibration.sliderMasker);
+            return startingSpeechValue(calibration.startingSNR, calibration.sliderMasker);
         }
         console.log("slide masker: = " + calibration.sliderMasker)
 
         return speech.toFixed(3);
-    }
-
-    
-    const handleCalibrationInputChange = (event) => {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-
-        if (name == "volumeRangeMasker") {
-            console.log(value + ".0 db")
-            calibration.noise = value;
-            calibration.sliderMasker = value;
-            calibration.speech = startingSpeechValue (parameters.startingSNR, calibration.sliderMasker)
-            audioRef.current.volume = calibration.noise;
-        }
-        setCalibration({ ...calibration, [name]: value})
-    }
-
-    const buttonCalibration = (isPlaying) => {
-        if (isPlaying) {
-            // Play masker and set text button to Pause
-            audioRef.current.volume = calibration.noise;
-            handlePlay();      
-            
-            playMasker(true)
-        } else {
-            // Pause masker 
-            handlePause();
-
-            playMasker(false)
-        }
-    }
-
-    const handlePlay = () => {
-        audioRef.current.play();
-        setIsAudioPaused(false); // is playing
-    }
-
-    const handlePause = () => {
-        audioRef.current.pause();
-        setIsAudioPaused(true) ; // is paused
-    }
-
-    const [calledCalibrationFrame, setCalledCalibrationFrame] = useState(false);
-    const playMasker = (play) => {
-        // Is Masker playing or not.
-        
-        if (play) {
-            
-            // Masker playing, set the flag to true
-            if (!calledCalibrationFrame) {
-                
-                // Reset the masker label inner html, found in the Calibration modal
-                calibration.maskerValueCalib = I18N.CALIB_FRAME_MASKER + calibration.noise;
-                    
-                // Set the value to true so we can go to the next section
-                setCalledCalibrationFrame(true);
-                handleShowModal();
-            } 
-                       
-        }
     }
 
     /**
@@ -146,10 +207,10 @@ export const TestParameters=()=> {
     const nextFrame = () => {
         
         // Stop sound in case it is still playing
-        handlePause();
+        // handlePause();
         
         // Set the flag value to false 
-        setCalledCalibrationFrame(false);
+        // setCalledCalibrationFrame(false);
         navigateToTest();
 
         // // Enable the "Practice Test" button, in case it was previously disabled
@@ -179,26 +240,38 @@ export const TestParameters=()=> {
             },
         })
     }
-    
-    const [showModal, setShowModal] = useState(false);
-
-    const handleCloseModal = () => setShowModal(false);
-    const handleShowModal = () => setShowModal(true);
 
     const handleSubmit =(e)=> {
         e.preventDefault();
         nextFrame();
+        console.log("list value is:...")
+        console.log(parameters)
     }
+
+    const [selectedIndex, setSelectedIndex] = useState(null);
     return (
         <>
             <form onSubmit={handleSubmit}>
                 {/* <legend>Test Parameters</legend> */}
                 {/* Test Parameters table */}
-                <div class="TestParameters" id="TestParameters">
-                <fieldset id="testParameterFrame">
-                    <legend>Test Parameters</legend>
-                    <table className="testParametersTable border-1" >
-                        <tbody>
+                <div className="TestParameters" id="TestParameters">
+                    <fieldset id="testParameterFrame">
+                        <legend>Test your hearing by listening to digit sequences</legend>
+                        <div className="text-center py-1 mx-2 mb-2"
+                             style={{fontSize: '14px'}}>
+                             {/*// style={{border: '1px solid gray', fontSize: '15px', color: 'gray'}}>*/}
+                            {/*Test your hearing by*/}
+                            {/*listening to digit sequences.<br/>*/}
+                            For optimal results:<br/>
+                            Use a high-quality pair of earphones or earbuds<br/>
+                            Choose a quiet area
+                        </div>
+                    </fieldset>
+
+                    <fieldset id="testParameterFrame">
+                        <legend>Test Parameters</legend>
+                        <table className="testParametersTable border-1">
+                            <tbody>
                             <tr>
                                 <td>Language:</td>
                                 {/* <!-- Drop-down list for the Test Language, with the following options: 
@@ -214,11 +287,12 @@ export const TestParameters=()=> {
                                     
                                 {/* <td><select id="languageDropDownList"></select></td> */}
                                 <td>Test Mode:</td>
-                                {/* <!-- Drop-down list for the Test Mode, with the either fixed, 
+                                {/* <!-- Drop-down list for the Test Mode, with the either fixed,
                                     if a device doesn't support the program to change the audio 
                                     files' volume, like IOS, or Adaptive --> */}
                                 <td>
-                                    <select id="testModeDropDownList" name="testMode" onChange={handleInputChange}>
+                                    {/* Disable the drop down list as there's only one test mode type */}
+                                    <select id="testModeDropDownList" disabled={true} name="testMode" onChange={handleInputChange}>
                                         <option>{I18N.testMode}</option>
                                     </select>
                                 </td>
@@ -236,12 +310,15 @@ export const TestParameters=()=> {
                                         })}
                                     </select>
                                 </td>
-                                <td>Test Ear:</td>
+                                <td>Test Condition:</td>
                                 {/* <!-- Drop-down list for the Test Ear, with the following options: 
                                     (0) Diotic, (1) Antiphase --> */}
                                 <td>
+                                    {/* Disable the drop down list as there's only one test ear type */}
                                     <select id="testEarDropDownList" name="testEar" onChange={handleInputChange}>
-                                        <option>{I18N.testEar}</option>
+                                        {I18N.testEar.map((type, idx) => {
+                                            return (<option key={idx}>{type}</option> )
+                                        })}
                                     </select> 
                                 </td>                            
                             </tr>
@@ -249,18 +326,39 @@ export const TestParameters=()=> {
                             <tr>
                                 <td>List #:</td>
                                 <td>
-                                    <select id="listDropDownList" variant="secondary" name="list" onChange={handleInputChange}>
-                                        {I18N.list.map((type, index) => {
-                                            // console.log(type)
-                                            return(<option key={index}>{type}</option>);
-                                        })}
+                                    <select
+                                        id="listDropDownList"
+                                        name="list"
+                                        value={selectedIndex ?? ''}
+                                        onChange={(e) => {
+                                            setSelectedIndex(e.target.value);
+                                            handleInputChange(e);
+                                        }}
+                                    >
+                                        {I18N.list.map((type, index) => (
+                                            <option key={index} value={type}>
+                                                {type}
+                                            </option>
+                                        ))}
                                     </select>
+                                    {/*<select id="listDropDownList" variant="secondary" name="list" value={selectedIndex ?? ''}*/}
+                                    {/*        onChange={(e) => {*/}
+                                    {/*            setSelectedIndex(e.target.value);*/}
+                                    {/*            handleInputChange(e);*/}
+                                    {/*        }}*/}
+                                    {/*>*/}
+                                    {/*    {I18N.list.map((type, index) => {*/}
+                                    {/*        // console.log(type)*/}
+                                    {/*        return (<option key={index}>{type}</option>);*/}
+                                    {/*    })}*/}
+                                    {/*</select>*/}
                                 </td>
-                                <td>Triplet Type:</td>
+                                <td>Scoring:</td>
                                 {/* <!-- Drop-down list for the Triplet Type, with the following options: 
                                     (0) Triplet, (1) All Digit --> */}
                                 <td>
-                                    <select type="text" id="tripletTypeDropDownList" name="tripletType" onChange={handleInputChange}>
+                                    <select type="text" id="tripletTypeDropDownList" name="tripletType"
+                                            onChange={handleInputChange}>
                                     {I18N.tripletType.map((type, index) => {
                                             // console.log(type)
                                             return(<option key={index}>{type}</option>);
@@ -272,60 +370,61 @@ export const TestParameters=()=> {
                             <tr>
                                 <td>Masker:</td>
                                 <td>
-                                    <select id="maskerDropDownList" variant="secondary" name="masker" onChange={handleInputChange}>
+                                    {/* Disable the drop down list as there's only one masker type */}
+                                    <select id="maskerDropDownList" variant="secondary" disabled={true} name="masker" onChange={handleInputChange}>
                                         <option>{I18N.masker}</option>
                                     </select>
                                 </td>
-                                <td ><input type="checkbox" name="isTestInQuiet" id="testInQuiet" onclick="testInQuiet()" onChange={handleInputChange}/>Test in quiet</td>                 
+                                {/* <td ><input type="checkbox" name="isTestInQuiet" id="testInQuiet" onclick="testInQuiet()" onChange={handleInputChange}/>Test in quiet</td>                  */}
                             </tr>
-                            {/* <!-- Row 5: Starting SNR --> */}
-                            <tr>
-                                <td>Starting SNR:</td>
-                                {/* <!-- Slider range --> */}
-                                <td colspan="1">
-                                    <input type="range" min="-5" max="5" value={parameters.startingSNR} className="slider" id="startingSNRrange" name="snr" onChange={handleInputChange} />
-                                </td>
-                                {/* <!-- SNR label --> */}
-                                {/* <td><label id="startingSNRdB" style="font-size: 15px; margin-left: 5px;" for="startingSNRrange">dB</label></td>   */}
-                                <td><label id="startingSNRdB" for="startingSNRrange">{parameters.startingSNR}.0 dB</label></td>  
-                            </tr>
+                            {/*//  <!-- Row 5: Starting SNR -->*/}
+                            {/*// <tr>*/}
+                            {/*//     <td>Starting SNR:</td>*/}
+                            {/*//     /!* <!-- Slider range --> *!/*/}
+                            {/*//     <td colspan="1">*/}
+                            {/*//         <input type="range" min="-5" max="5" value={parameters.startingSNR} className="slider" id="startingSNRrange" name="snr" onChange={handleInputChange} />*/}
+                            {/*//     </td>*/}
+                            {/*//     /!* <!-- SNR label --> *!/*/}
+                            {/*//     /!* <td><label id="startingSNRdB" style="font-size: 15px; margin-left: 5px;" for="startingSNRrange">dB</label></td>   *!/*/}
+                            {/*//     <td><label id="startingSNRdB" for="startingSNRrange">{parameters.startingSNR}.0 dB</label></td>*/}
+                            {/*// </tr>*/}
                         </tbody>
                     </table>
                 </fieldset>
 
-                <fieldset id="calibrationValueFrame">
-                    <legend>Internal Calibration Values</legend>
+                {/*<fieldset id="calibrationValueFrame">*/}
+                {/*    <legend>Internal Calibration Values</legend>*/}
 
-                    {/* <!-- Internal Calibration table --> */}
-                    <table className="calibrationParametersTable">
-                        {/* <!-- Row 1: Speech, Speech Gain input box and Play Noise button --> */}
-                        <tbody>
-                        <tr>
-                            <td id="tdSpeechCalib" ><label id="speechLabelCalib">Speech:</label></td>
-                            {/* <!-- Speech Gain input box disabled--> */}
-                            <td id="tdSpeechCalib" ><input id="speechCalib" value={calibration.speech} name="speech" onChange={handleCalibrationInputChange} disabled/></td>
-                            <audio id="calibMaskerAudio" src="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Maskers/SSNOISE.wav" type="audio/wav" ref={audioRef}></audio>
-                            <td colSpan="2" id="playMaskerBtn" className="mx-auto"><button type="button" onClick={() => {buttonCalibration(true);}} id="btnCalibMaskerPlay" className="btnPlay" hidden={!isAudioPaused}>Play Noise</button>
-                            <button type="button" onClick={() => {buttonCalibration(false);}} id="btnCalibMaskerPlay" className="btnPause" hidden={isAudioPaused}>Stop Noise</button></td>
-                            {/* <td></td> */}
-                            {/* <!-- Audio Masker --> */}
-                            
-                        </tr>
-                        {/* <!-- Row 2: Noise --> */}
-                        <tr id="trMaskerCalib">
-                            <td><label id="maskerLabelCalib">Noise:</label></td>
-                            
-                            <td id="tdMaskerCalib">
-                                {/* <!-- Masker slider --> */}
-                                <input type="range" min="0.1" max="0.9" value={calibration.sliderMasker} step="0.1" className="slider" name="volumeRangeMasker" onChange={handleCalibrationInputChange}/>                        
-                            </td>
-                            <td id="tdMaskerCalib"><label id="maskerCalib" for="volumeRangeMasker">{calibration.noise}</label></td>
-                            <td id="playMaskerBtn"></td>
-                        
-                        </tr>
-                        </tbody>
-                    </table>
-                </fieldset>
+                {/*    /!* <!-- Internal Calibration table --> *!/*/}
+                {/*    <table className="calibrationParametersTable">*/}
+                {/*        /!* <!-- Row 1: Speech, Speech Gain input box and Play Noise button --> *!/*/}
+                {/*        <tbody>*/}
+                {/*        <tr>*/}
+                {/*            <td id="tdSpeechCalib" ><label id="speechLabelCalib">Speech:</label></td>*/}
+                {/*            /!* <!-- Speech Gain input box disabled--> *!/*/}
+                {/*            <td id="tdSpeechCalib" ><input id="speechCalib" value={calibration.speech} name="speech" onChange={handleCalibrationInputChange} disabled/></td>*/}
+                {/*            <audio id="calibMaskerAudio" src="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Maskers/SSNOISE.wav" type="audio/wav" ref={audioRef}></audio>*/}
+                {/*            <td colSpan="2" id="playMaskerBtn" className="mx-auto"><button type="button" onClick={() => {buttonCalibration(true);}} id="btnCalibMaskerPlay" className="btnPlay" hidden={!isAudioPaused}>Play Noise</button>*/}
+                {/*            <button type="button" onClick={() => {buttonCalibration(false);}} id="btnCalibMaskerPlay" className="btnPause" hidden={isAudioPaused}>Stop Noise</button></td>*/}
+                {/*            /!* <td></td> *!/*/}
+                {/*            /!* <!-- Audio Masker --> *!/*/}
+                {/*            */}
+                {/*        </tr>*/}
+                {/*        /!* <!-- Row 2: Noise --> *!/*/}
+                {/*        <tr id="trMaskerCalib">*/}
+                {/*            <td><label id="maskerLabelCalib">Noise:</label></td>*/}
+                {/*            */}
+                {/*            <td id="tdMaskerCalib">*/}
+                {/*                /!* <!-- Masker slider --> *!/*/}
+                {/*                <input type="range" min="0.1" max="0.9" value={calibration.sliderMasker} step="0.1" className="slider" name="volumeRangeMasker" onChange={handleCalibrationInputChange}/>                        */}
+                {/*            </td>*/}
+                {/*            <td id="tdMaskerCalib"><label id="maskerCalib" for="volumeRangeMasker">{calibration.noise}</label></td>*/}
+                {/*            <td id="playMaskerBtn"></td>*/}
+                {/*        */}
+                {/*        </tr>*/}
+                {/*        </tbody>*/}
+                {/*    </table>*/}
+                {/*</fieldset>*/}
 
                 </div>
                 {/* <!-- Button to go to the next frame --> */}
@@ -334,23 +433,23 @@ export const TestParameters=()=> {
                 </table>
             </form>
 
-            {/* <!-- This class shows a calibration modal, to let the user 
-            know that he should increase the system sound of his 
-            device in order to hear the audio files comfortably. --> */}
-            <Modal show={showModal} onHide={handleCloseModal}>
-                <Modal.Header>
-                    <Modal.Title>Calibration</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p>Please make sure to adjust your device's volume so that you can hear the noise without it being too loud.</p>
-                    <p id="maskerValueCalib">The current masker volume is set to : {calibration.noise}</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button type="button" id="doneMaskerCalib" onClick={handleCloseModal}>Continue</button>
+            {/*/!* <!-- This class shows a calibration modal, to let the user */}
+            {/*know that he should increase the system sound of his */}
+            {/*device in order to hear the audio files comfortably. --> *!/*/}
+            {/*<Modal show={showModal} onHide={handleCloseModal}>*/}
+            {/*    <Modal.Header>*/}
+            {/*        <Modal.Title>Calibration</Modal.Title>*/}
+            {/*    </Modal.Header>*/}
+            {/*    <Modal.Body>*/}
+            {/*        <p>Please make sure to adjust your device's volume so that you can hear the noise without it being too loud.</p>*/}
+            {/*        <p id="maskerValueCalib">The current masker volume is set to : {calibration.noise}</p>*/}
+            {/*    </Modal.Body>*/}
+            {/*    <Modal.Footer>*/}
+            {/*        <button type="button" id="doneMaskerCalib" onClick={handleCloseModal}>Continue</button>*/}
 
-                </Modal.Footer>
-            </Modal>
-                
+            {/*    </Modal.Footer>*/}
+            {/*</Modal>*/}
+            {/*    */}
         </>
     );
 }

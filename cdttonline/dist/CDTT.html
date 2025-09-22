@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <!-- Header section -->
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Link this document with the css files -->
+        <link rel="stylesheet" href="CDTTstyle.css" defer>  <!-- Main css file -->
+        <link rel="stylesheet" href="print.css" defer>      <!-- Printing css file -->
+        
+        <!-- Add the CDTT website icon & title -->
+        <link rel="icon" href="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Script/Images/icon-DTT.png">
+        <title>Canadian Digit Triplet Test</title>
+        
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        </style>
+        <script type="module" src="index.js"></script>
+    <script defer src="main.js"></script></head>
+
+    <!-- Body section -->
+    <body>
+        <!-- <p id="testISIOS">hh</p> -->
+        <!-- <button type="button" id="btn" onclick="openAskViewModal()">Show Modal</button> -->
+
+        <!-- Show first Modal -- Ask user if wants to view Results -->
+        <div id="modalAskViewResults" class="modal AskViewResults" style="display: none;">
+            
+            <div class="modal-content askViewResults">    
+                
+                <div class="container">
+                    <h1>View Results</h1>
+                    <p>Would you like to access your Results?</p>
+                    
+                    <!-- Do not view Results button -->
+                    <button type="button" class="btnNotViewResults" id="btnNotViewResults" onclick="ModalResults.closeResultsModal('modalAskViewResults')">Cancel</button>                    
+                    
+                    <!-- View Results button -->
+                    <button type="button" class="btnViewResults" id="btnViewResults" onclick="handleViewResults()">View</button> 
+                </div>  
+            </div>
+        </div>
+
+        <!--The following div will display the test results in a modal, when
+            the test is completed. The user can send his/her results to a 
+            database, or can go back to the main page-->
+        <div id="showResultsModal" class="modal showResults" style="display: none;">   
+            
+            <!-- x button to close modal -->
+            <span class="close" onclick="ModalResults.closeResultsModal('showResultsModal')">x</span>
+            
+            <!-- Modal content -->
+            <div class="modal-content" style="opacity: 1;" id="contentResultsModal">
+                <div class="container" id="showResultsContainer">
+                    
+                    <!-- Printing option, will print the results page -->
+                    <table class="tableModal_btn">
+                        <!-- Handle a print button -->
+                        <tr>
+                            <td><button type="button" class="printBtn" id="printBtn" onclick="handlePrint()"> <span class="glyphicon" style="margin-right: 5px;">&#x1f5b6;</span>Print</button></td>
+                        </tr>
+                    </table>
+                 
+                    <!--Display the table Results title-->
+                    <h1>Test Results</h1>
+                    
+                    <!-- Table showing all the results from the test -->
+                    <!-- For debugging purposes, we will just use random test parameters -->
+                    <section>
+                        <h4>Test Parameters</h4>
+                        <table class="tableResults" style="border-collapse: collapse; ">
+
+                            <!-- Row 1: Date and Time the test started and the duration of the test -->
+                            <tr >
+                                <th class="results" style="border-bottom: 1pt solid black;">Date & Time:</th>
+                                <td class="results" style="border-bottom: 1pt solid black;" id="resultDateTime">2023-03-08, 3:27:03 PM | 00min 19s</td>
+                            </tr>
+                            <!-- Row 2: Test language -->
+                            <tr>
+                                <th class="results">Language:</th>
+                                <td class="results" id="resultLanguage">EN_CA</td>                                
+                            </tr>
+                            <!-- Row 3: Test talker -->
+                            <tr>
+                                <th class="results">Talker:</th>
+                                <td class="results" id="resultTalker">Female</td>
+                            </tr>
+                            <!-- Row 4: Test list -->
+                            <tr>
+                                <th class="results">List #:</th>
+                                <td class="results" id="resultListNumber">01</td>
+                            </tr>
+                            <!-- Row 5: Test mode 
+                                By Default, its always adaptive. However, if a device doesn't support
+                                the program to change the audio files' volume, like IOS, then the test
+                                mode will be Fixed -->
+                            <tr>
+                                <th class="results">Mode:</th>
+                                <td class="results" id="resultMode">Adaptive</td>
+                            </tr>
+                            <!-- Row 6: Test triplet type -->
+                            <tr>
+                                <th class="results">Triplet Type:</th>
+                                <td class="results" id="resultTripletType">Triplet</td>
+                            </tr>
+                            <!-- Row 7: Test ear -->
+                            <tr>
+                                <th class="results">Test Ear:</th>
+                                <td class="results" id="resultTestEar">Diotic</td>
+                            </tr>
+                            <!-- Row 8: Masker file used (Always SSNOISE) -->
+                            <tr>
+                                <th class="results">Masker:</th>
+                                <td class="results" id="resultMasker">SSNOISE</td>
+                            </tr>
+                            <!-- Row 9: Starting SNR calculated -->
+                            <tr>
+                                <th class="results" style="border-bottom: 1pt solid black;">Starting SNR:</th>
+                                <td class="results" style="border-bottom: 1pt solid black;" id="resultStartingSNR">0.0 dB</td>
+                            </tr>                        
+                        </table>
+
+                        <!-- Display the Adpative subtitle -->
+                        <h4>Adaptive Test</h4>
+
+                        <!-- SubTable to display the adaptive results -->
+                        <table class="adaptiveResults">
+                            <!-- Row 1: Calculated SRT -->
+                            <tr>
+                                <th class="results">SRT:</th>
+                                <td class="results" id="resultSRT">-7.0</td>
+                            </tr>
+                            <!-- Row 2: Calculated Standard Deviation -->
+                            <tr>
+                                <th class="results">St. Dev.</th>
+                                <td class="results" id="resultStDev">3.0</td>
+                            </tr>
+                            <!-- Row 3: Total number of reversals -->
+                            <tr>
+                                <th class="results">Reversals:</th>
+                                <td class="results" id="resultReversals">7</td>
+                            </tr>
+                        </table>
+                    </section>
+                    
+                    <!-- Leave some space between the end of the table and 
+                        the next section -->
+                    <br>
+                    <br>
+                    
+                    <!--The following class will show the detailed Results 
+                        table. All of the correct triplet answers and all of 
+                        the triplets answered by the user will be displayed-->
+                    <div class="showDetailedResults" id="showDetailedResults">
+                        
+                        <!-- Extended Results subtite -->
+                        <h3>Extended Results</h3>
+                    </div>
+
+                    <!-- Leave some space between the end of the table and the 
+                        next section -->
+                    <br>
+                    <br>
+
+                    <!-- Ask if user wants to save results or not -->
+                    <div class="saveResultsQ">
+                        <h2>Save Results</h2>
+                        <p>Do you allow your results to be saved anonymously for research purpose in the CDTT database?</p>       
+                        
+                        <div class="clearfix">
+                            
+                            <!-- Do not show extra section and go back to main page button -->
+                            <button type="button" onclick="ModalResults.closeResultsModal('showResultsModal')" class="modalButton cancelbtn">Cancel</button>
+                            
+                            <!-- Show extra section button -->
+                            <button type="button" onclick="ModalResults.displayExtraSection(true)" class="modalButton allowBtn">Allow</button>
+                        </div>
+                    </div>
+                    
+                    <section>
+                        <!--This class will be displayed, if the user selected the 'Allow'
+                            button, in the "saveResultsQ" class above. The optional questions 
+                            and the terms and conditions will be displayed on the Results modal-->
+                        <div class="allowSaveExtraSection" style="display: none;">
+                            <!-- Insert a new line -->
+                            <br>
+
+                            <!-- Optional questions for the user to answer -->
+                            <p class="pNoteSaveResults"> Please answer the following questions. Required fields are followed by *.</p>
+                            <form>
+                                <fieldset>
+                                    <legend style="text-align: left; font-size: 14px;">Extra Questions (Optional)</legend>
+                                    
+                                    <!-- Question 1: Age
+                                        A number input is given for the user to enter their age, 
+                                        with a minimum value of 1 and a maximum value of 150  -->
+                                    <p class="qResults">What is your age?<input type="number" name="age" id="age" value="" style="width: 40px; margin-left: 20px;" max="150" min="1" maxlength="3">
+                                        <!-- Insert a new line -->
+                                        <br>
+                                    </p>
+                                    <!-- Question 2: Hearing 
+                                        A drop-down list is given, with the following otions: 
+                                        (0) blank, (1) Good, (2) Fair, (3) Poor -->
+                                    <p class="qResults">How is your hearing?<select id="hearingDropDownList" style="margin-left: 20px;"></select></p>
+                                    <!-- Question 3: Better ear 
+                                        A drop-down list is given, with the following options
+                                        (0) blank, (1) Both ears are the same, (2) Left ear is better, (3) Right ear is better -->
+                                    <p class="qResults">Is one ear better than the other?<select id="hearing2DropDownList" style="margin-left: 20px;"></select></p>
+                                    <!-- Question 4: Language proficiency 
+                                        A drop-down list is given, with the following options
+                                        (0) blank, (1) Native Speaker, (2) Advanced, (3) Intermediate, (4) Beginner -->
+                                    <p class="qResults"><label id="qlanguageProficiency">What is your level of language proficiency in </label><select id="languageProficiencyDropDownList" style="margin-left: 20px;"></select></p>
+                                    <!-- Question 5: Dominant language -->
+                                    <p class="qResults">What is your dominant language?<input type="text" name="dominantLanguageTextBox" id="dominantLanguageTextBox" style="margin-left: 20px;"><br></p>
+                                    <!-- Comments -->
+                                    <p class="qResults">Any comments?</p>
+                                    <textarea id="comments" rows="4" cols="50" style="resize: none; width: 95%; padding: 5px;" maxlength="350"></textarea>
+                                    <!-- Show the number of characters entered in the text area : x/350 -->
+                                    <p class="maxSizeTextArea" id="maxSizeTextArea"></p>
+                                </fieldset>
+                                
+                                <!-- Insert a new line -->
+                                <br>
+                            
+                                <!--Terms and conditions class. To move to the next section,
+                                    the terms and conditions checkbox needs to be checked.
+                                    Otherwise, an error message will be displayed.-->
+                                <fieldset id="termsAndConditionFrame">
+                                    <legend style="text-align: left; font-size: 14px;">Terms and Conditions </legend>
+                                    <!-- Terms and Conditions -->
+                                    <div class="termsAndConditions" id="termsAndConditions">
+                                        <p><input type="checkbox" name="modalResultsTerms" id="modalResultsTerms" style="margin-right: 10px;" required>
+                                            <strong><span >*</span></strong>
+                                            I understand the results will be held anonymously.
+                                        </p>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Insert a new line -->
+                                <br>  
+                            </form>
+                             <!-- Submit the results to the firebase -->
+                            <button type="button" class="submitResultsBtn" id="submitResultsBtn">Submit Results</button>
+                        </div>
+                    </section>
+                </div>          
+            </div>
+        </div>
+
+        <!-- This class is called when the user submits his results to the database. 
+            It closes the "Results" window and displays this new modal window, where 
+            the progress of the data saving is displayed with a loading bar. Once the 
+            results have been successfully saved to the database, a message is displayed 
+            informing the user that he will be redirected to the main page.-->
+        <div id="resultsSavedModal" class="modal resultsSaved" style="display: none;">
+            <!-- Modal Content-->            
+            <div class="modal-content">
+                
+                <div class="container">
+
+                    <!-- Loading bar -->
+                    <div class="loading" id="loading">
+                        <div class="loader" id="loader"></div>  
+                        <h1>Saving Results</h1>
+                    </div>
+                    
+                    <!-- Results saved successfully, returning to the main page -->
+                    <div id="loaded" style="display: none;">
+                        <h1>Results saved successfully.</h1>
+                        <p>Returning to main page.</p>       
+                        <div class="clearfix">
+                            <button type="button" class="modalButton okBtn" id="btnReturningMainP">OK</button>
+                           </div>
+                    </div>                   
+                </div>          
+            </div>
+        </div>
+
+        <!--Button on the main page to load the test-->
+        <div class="main" id="mainButton">
+           <button onclick="loadTest()">Load CDTT test</button> 
+        </div>
+        <br>
+            
+        <!-- This class shows a calibration modal, to let the user 
+            know that he should increase the system sound of his 
+            device in order to hear the audio files comfortably. -->
+        <div id="calibrationModal" class="modal calibration" >
+            <div class="modal-content calibration">
+                <div class="container">
+                   <form>
+                        <!-- Calibration modal title -->
+                        <h1>Calibration</h1>
+                        
+                        <!-- Calibration message for the user -->
+                        <p style="margin: 20px;">Please make sure to adjust your device's volume so that you can hear the noise without it being too loud.</p>
+                        <p id="maskerValueCalib">Masker volume is set to : </p>
+                        
+                        <!-- Button to redirect the user back to the test parameters page, to continue calibrating -->
+                        <button type="button" id="doneMaskerCalib" onclick="doneCalibration()" style="align-content: center; padding-left: 20px; padding-right: 20px;">Continue</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!--MAIN TEST PAGE.
+            This class is the main page of the test. This class 
+            is called when the user selects the "load CDTT test" 
+            button. It displays the available test parameters 
+            and the offered calibration data. 
+            With this class, the user can start the test. -->
+        <div id="CDTTtest" style="display: none" class="CDTTtest">
+
+            <!-- Frame title -->
+            <h2><center>CDTT</center></h2>
+            <form>
+                <!-- Test Parameters class -->
+                <div class="TestParameters" id="TestParameters">
+
+                    <!-- Test Parameters field -->
+                    <fieldset id="testParameterFrame">
+                        <legend>Test Parameters</legend>
+
+                        <!-- Test Parameters table -->
+                        <table class="testParametersTable">
+                            <!-- Set up the test paramerters table, 4 rows, 5 columns -->
+                            <!-- Row 1: Language and Test Mode -->
+                            <tr>
+                                <td>Language:</td>
+                                <!-- Drop-down list for the Test Language, with the following options: 
+                                    (0) EN_CA, (1) FR_CA -->
+                                <td><select id="languageDropDownList"></select></td>
+                                <td>Test Mode:</td>
+                                <!-- Drop-down list for the Test Mode, with the either fixed, 
+                                    if a device doesn't support the program to change the audio 
+                                    files' volume, like IOS, or Adaptive -->
+                                <td><select id="testModeDropDownList"></select></td>
+                            </tr>
+                            <!-- Row 2 : Talker and Test ear -->
+                            <tr>
+                                <td>Talker:</td>
+                                <!-- Drop-down list for the Test Talker, with the following options: 
+                                    (0) Female, (1) Male -->
+                                <td><select id="talkerDropDownList"></select></td>
+                                <td>Test Ear:</td>
+                                <!-- Drop-down list for the Test Ear, with the following options: 
+                                    (0) Diotic, (1) Antiphase -->
+                                <td><select id="testEarDropDownList"></select></td>                            
+                            </tr>
+                            <!-- Row 3 : List # and Triplet type -->
+                            <tr>
+                                <td>List #:</td>
+                                <td><select id="listDropDownList"></select></td>
+                                <td>Triplet Type:</td>
+                                <!-- Drop-down list for the Triplet Type, with the following options: 
+                                    (0) Triplet, (1) All Digit -->
+                                <td><select type="text" id="tripletTypeDropDownList"></select></td>                           
+                            </tr>
+                            <!-- Row 4 : Masker and Test in quiet check box -->
+                            <tr>
+                                <td>Masker:</td>
+                                <td><select  id="maskerDropDownList"></td>
+                                <td colspan="2"><input type="checkbox" name="testInQuiet" id="testInQuiet" onclick="testInQuiet()">Test in quiet</td>                 
+                            </tr>
+                            <!-- Row 5: Starting SNR -->
+                            <tr>
+                                <td>Starting SNR:</td>
+                                <!-- Slider range -->
+                                <td colspan="1">
+                                    <input type="range" min="-5" max="5" value="0.00" class="slider" id="startingSNRrange" oninput="updateSNRSliderValue()" >
+                                </td>
+                                <!-- SNR label -->
+                                <td><label id="startingSNRdB" style="font-size: 15px; margin-left: 5px;" for="startingSNRrange">dB</label></td>  
+                            </tr>
+                        </table>
+                    </fieldset>
+                    
+                    <!-- Internal Calibration field -->
+                    <fieldset id="calibrationValueFrame">
+                        <legend>Internal Calibration Values</legend>
+
+                        <!-- Internal Calibration table -->
+                        <table class="calibrationParametersTable">
+                            <!-- Row 1: Speech, Speech Gain input box and Play Noise button -->
+                            <tr>
+                                <td id="tdSpeechCalib" ><label id="speechLabelCalib" style="font-size: 14px; margin-right: 15px;">Speech:</label></td>
+                                <!-- Speech Gain input box disabled-->
+                                <td id="tdSpeechCalib" ><input id="speechCalib" style="width: 50px; text-align: center;" disabled></td>
+                                <!-- Audio Masker -->
+                                <audio id="calibMaskerAudio" src="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Maskers/SSNOISE.wav" type="audio/wav"></audio>
+                                <td colspan="2" id="playMaskerBtn"><button type="button" onclick="buttonCalibration()" style="margin: auto; display: block;" id="btnCalibMaskerPlay" class="btnPlay">Play Noise</button></td>
+                            </tr>
+                            <!-- Row 2: Noise -->
+                            <tr id="trMaskerCalib">
+                                <td><label id="maskerLabelCalib" style="font-size: 14px; margin-right: 15px;">Noise:</label></td>
+                               
+                                <td id="tdMaskerCalib">
+                                    <!-- Masker slider -->
+                                    <input type="range" min="0.1" max="0.9" value="0.5" step="0.1" class="slider" id="volumeRangeMasker" oninput="updateMaskerSliderValue()">
+                                
+                                </td>
+                                <td id="tdMaskerCalib"><label id="maskerCalib" style="font-size: 15px; margin-left: 5px;" for="volumeRangeMasker"></label></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+
+                    <!-- Button to go to the next frame -->
+                    <table>
+                        <tr><td><center><button type="button" id="btnNext" onclick="nextFrame()"><b style="margin-left: 5px; margin-right: 5px;">Next</b></button></center></td></tr>
+                    </table>
+                </div> 
+            </form>
+              
+
+            <!-- This class is called when the user selects the "Next" button, on the main page. 
+                It allows the user to either start a practice test, show/hide the test instructions, 
+                or skip the practice test and proceed to the test 
+                When the user selects the "Show Instructions" button, the button's inner HTML is 
+                changed to "Hide Instructions". -->
+            <div id="practiceTest" class="practiceTest" style="display: none; margin: 20px; ">
+                <!-- Display the buttons to either start the practice test, see the test
+                    instructions or to skip to the Test -->
+                <table class="practiceTestBtnClass">
+                    <tr id="testBtnRow">
+                        <!-- Start the practice test -->                        
+                        <td><center><button type="button" id="btnPracticeTest" onclick="startPracticeTest()"><b>Practice</b></button></center></td>
+                        <!-- Show/Hide Test Instructions button-->
+                        <td><center><button type="button" id="btnInstructions" onclick="showInstructions()"><b>Show Instructions</b></button></center></td>
+                        <!-- Skip to Test Button -->
+                        <td><center><button type="button" id="btnSkipToTest" onclick="skipToTest()"><b>Skip Practice</b></button></center></td>
+                    </tr>
+                </table>
+                
+                <!-- This class is called when the "Show Instructions" button
+                    was selected. It shows the test instructions -->
+                <div id="testInstructions" style=" display: none;">
+                    <fieldset>
+                        <legend>Test Instructions</legend>
+                        <!-- <h4 style="margin-block-end: 2px;margin-block-start: 10px;"><u>Test Instructions</u></h4> -->
+                        <!-- List the instructions using bullet points -->
+                        <ul id="testInstructions" style="font-size:13px; padding-inline-start: 20px; margin-block-end: 1px; margin-block-start: 1px;">
+                            <li>You will hear 24 sets of 3 digits in noise</li>
+                            <li>After each set, enter the three digits heard using the on-screen keypad. You can use the backspace key if you want to change your answer</li>
+                            <li>To submit your answer, select the enter key (when green) and the following set will be played</li>
+                            <li>To stop a test before completion, select the "Stop Test" button in the upper right corner</li>
+                            <li>You can see your results once the test is completed</li>
+                            <li><u>Practice:</u></li>
+                            <ul>
+                                <li>Select this button if you want to practice before the test</li>
+                                <li>Adjust the volume of your device if necessary</li>
+                                <li>To play a new set, select the "Practice" button again</li>
+                            </ul>
+                        </ul>
+                    </fieldset>
+                </div>
+                
+                <!-- Show the score of the triplet for the practice test -->
+                <p id="scorePracticeTest" style="font-size: 13px; margin-left: 20px;"></p>
+            </div>
+
+            <!-- This class is called when the user select the "Skip Practice Test" button.  -->
+            <div id="startCDTT" class="startCDTT" style="display: none;">
+                <table>
+                    <tr>
+                        <!-- Start Test button -->
+                        <td><center><button type="button" id="btnStartTest" onclick="startTest()"><b>Start Test</b></button></center></td>
+                        <!-- Stop Test button
+                            By default, this button is disabled. It will be 
+                            enabled once the "Start Test" button is pressed. -->
+                        <td><center><button type="button" id="btnStopTest" onclick="stopTest()" disabled><b>Stop Test</b></button></center></td>
+                    </tr>
+                </table>
+            </div>     
+            
+            <!-- This class creates the on-screen keypad for the user. 
+                By default, its display is set to none and its visibility 
+                is set to hidden as we only wwant the on-screen keypad to 
+                be displayed once the Practice Test or the CDTT Test has 
+                started. -->
+            <!-- Create keyboard to enter the answers -->
+            <div id="keyboardCDTT" class="keyboardCDTT" name="keyboardCDTT" style="display: none; visibility: hidden;">
+                
+                <!-- On-Screen keypad table -->
+                <table class="tableKeyboard" id="tableKeyboard" style="visibility:hidden;">
+                    <!-- Row 1: Text input -->
+                    <tr><th colspan="3"><input type="text" class="inputUserKeyboard" name="inputUserText" id="inputUserText" value="" maxlength="3" onkeyup="keyboardListener(event)"></th></tr>
+                    <!-- Row 2: 1-2-3 buttons -->
+                    <tr>    
+                        <td><center><button class="keyboardBtn" id="btn1" onclick="keypadDigitListener(1)" >1</button></center></td>
+                        <td><center><button class="keyboardBtn" id="btn2" onclick="keypadDigitListener(2)">2</button></center></td>
+                        <td><center><button class="keyboardBtn" id="btn3" onclick="keypadDigitListener(3)">3</button></center></td>
+                    </tr>
+                    <!-- Row 3: 4-5-6 buttons -->
+                    <tr>
+                        <td><center><button class="keyboardBtn" id="btn4" onclick="keypadDigitListener(4)">4</button></center></td>
+                        <td><center><button class="keyboardBtn" id="btn5" onclick="keypadDigitListener(5)">5</button></center></td>
+                        <td><center><button class="keyboardBtn" id="btn6" onclick="keypadDigitListener(6)">6</button></center></td>
+                    </tr>
+                    <!-- Row 4: 7-8-9 buttons -->
+                    <tr>
+                        <td><center><button class="keyboardBtn" id="btn7" onclick="keypadDigitListener(7)">7</button></center></td>
+                        <td><center><button class="keyboardBtn" id="btn8" onclick="keypadDigitListener(8)">8</button></center></td>
+                        <td><center><button class="keyboardBtn" id="btn9" onclick="keypadDigitListener(9)">9</button></center></td>
+                    </tr>
+                    <!-- Row 5: Delete-0-Submit buttons -->
+                    <tr>
+                        <!-- Delete button -->
+                        <td><center><button class="keyboardBtn btnDelete" id="btnDelete" onclick="keypadDeleteListener()" disabled><a><img src="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Script/Images/icon-delete.png" id="iconDelete" alt="Delete"></a></button></center></td>
+                        <td><center><button class="keyboardBtn" id="btn0" onclick="keypadDigitListener(0)">0</button></center></td>
+                        <!-- Submit button -->
+                        <td><center><button class="keyboardBtn btnSubmit" id="btnSubmitTest" onclick="keypadSubmitListener()" disabled><img src="https://raw.githubusercontent.com/MelinaRochon/CDTT_lists/main/Script/Images/icon-enter.png" id="iconEnter" alt="Submit"></button></center></td>
+                    </tr>
+                </table>
+                
+                <!-- Progress bar labels -->
+                <p style="margin-left: 15px; padding: 5px; margin-top: 10px; font-size: 12px; text-align: center;" id="labelProgress"></p>
+           </div>
+            <br>
+        </div>
+            
+        <!-- JavaScript scripts that are used -->
+        <script src="I18N.js"></script>
+        <script src="Settings.js"></script> 
+        <script src="DSPutils.js"></script>
+        <script src="ModalResults.js"></script>
+        <script src="Calibration.js"></script>
+        <script src="PracticeTest.js"></script>
+        <script src="CDTTscript.js"></script>
+
+    </body>
+</html>

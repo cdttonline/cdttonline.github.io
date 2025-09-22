@@ -28,7 +28,7 @@ export function ExportToCSV (data, resultsId) {
 
     // Step 2: Create CSV content
     const headers = ['Results ID', 'Date', 'Time'];
-    const headers1 = ['Language', 'Talker', 'List', 'Mode', 'Masker', 'Starting SNR', 'Test Ear', 'Triplet Type', 'Score']; 
+    const headers1 = ['Language', 'Talker', 'List', 'Mode', 'Masker', 'Starting SNR', 'Test Ear', 'Scoring', 'Score']; 
     const headers2 = ['Reversals', 'SRT', 'St. Dev'];
     const header3 = ['ID', 'Stimulus', 'User'];
     const header4 = ['Age', 'Language Proficiency', 'Better Ear', 'Hearing', 'Dominant Language', 'Comments'];

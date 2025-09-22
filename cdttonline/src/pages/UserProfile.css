@@ -1,0 +1,12 @@
+hr {
+    border: 0;
+    border-top: var(--bs-border-width) solid;
+    opacity: .25;
+    color: rgb(108, 117, 125) !important;
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+}
+
+/*.form-select {*/
+/*    width: auto !important;*/
+/*}*/

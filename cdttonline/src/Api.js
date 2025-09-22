@@ -1,5 +1,5 @@
-import { resultsCollection, usersCollection } from "./Firebase";
-import { getDocs } from "firebase/firestore";
+import {db, resultsCollection, usersCollection} from "./firebase/Firebase";
+import {doc, getDoc, getDocs} from "firebase/firestore";
 const fcts = {};
 
 const getResultsFromDataBase = async() => {

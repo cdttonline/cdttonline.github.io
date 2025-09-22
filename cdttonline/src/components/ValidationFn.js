@@ -4,11 +4,11 @@ const validateTestUserResults = (answer) => {
     console.log("The answers to be validated are", answer);
     let res = [];
     for (let key in answer) {
-        if (key == "age") {
+        if (key === "age") {
             validateAge(answer[key], res);
-        } else if (key == "termsChecked") {
+        } else if (key === "termsChecked") {
             validateCheck(answer[key], res);
-        } else if (key == "comment") {
+        } else if (key === "comment") {
             validateComments(answer[key], res);
         } 
     }
@@ -18,9 +18,9 @@ const validateTestUserResults = (answer) => {
 const validatePwdChange = (answer) => {
     let res = [];
     for (let key in answer) {
-        if (key == "newPwd") {
+        if (key === "newPwd") {
             validatePassword(answer[key], res);
-        } else if (key == "confirmNewPwd") {
+        } else if (key === "confirmNewPwd") {
             validatePasswordConfirm(answer[key], answer["newPwd"], res);
         }
     }
@@ -32,23 +32,23 @@ const validateAddingUser = (answer) => {
     console.log("The answers to be validated are", answer);
     let res = [];
     for (let key in answer) {
-        if (key == "firstName") {
+        if (key === "firstName") {
             validateFirstName(answer[key], res);
-        } else if (key == "lastName") {
+        } else if (key === "lastName") {
             validateLastName(answer[key], res);
-        } else if (key == "email") {
+        } else if (key === "email") {
             validateEmail(answer[key], res);
         } 
-        // else if (key == "password") {
-        //     validatePassword(answer[key], res);
-        // }
+        else if (key === "password") {
+            validateTmpPwd(answer[key], res);
+        }
     }
     return res;
 }
 
 const validatePasswordConfirm = (confirmPwd, newPwd, res) => {
     let feedback = "";
-    if (confirmPwd != newPwd) {
+    if (confirmPwd !== newPwd) {
         feedback = "Your passwords don't match."
     } 
     res.push(feedback);
@@ -59,12 +59,31 @@ const validatePassword = (password, res) => {
     let feedback = "";
     // let regexp = /^[A-Za-z0-9]+$/;
     const regexp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]+$/;
-    if ((password.length < 6) && regexp.test(password) == false) {
-        feedback = "Your password must contain more than 6 characters and have at least 1 digit, 1 lowercase letter and one special character !@#$%^&*"
+    if ((password.length < 6) && regexp.test(password) === false) {
+        feedback = "Your password must contain more than 6 characters and have at least 1 digit, 1 lowercase letter and one of the following special character !@#$%^&*"
     } else if (password.length < 6) {
         feedback = "Your password must contain more than 6 characters."
-    } else if (regexp.test(password) == false) {
-        feedback = "Your password must contain at least 1 digit, at least 1 lowercase letter and at least one special character !@#$%^&*"    
+    } else if (password === "" || password === null) {
+        feedback = "Invalid password";
+    } else if (regexp.test(password) === false) {
+        feedback = "Your password must contain at least 1 digit, at least 1 lowercase letter and at least one of the following special character !@#$%^&*"
+    }
+    res.push(feedback);
+    return res;
+}
+
+const validateTmpPwd = (password, res) => {
+    let feedback = "";
+    // let regexp = /^[A-Za-z0-9]+$/;
+    const regexp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]+$/;
+    if ((password.length < 6) && regexp.test(password) === false) {
+        feedback = "Your password must contain more than 6 characters and have at least 1 digit, 1 lowercase letter and one of the following special character !@#$%^&*"
+    } else if (password.length < 6) {
+        feedback = "Your password must contain more than 6 characters."
+    } else if (password === "" || password === null) {
+        feedback = "Invalid password";
+    } else if (regexp.test(password) === false) {
+        feedback = "Your password must contain at least 1 digit, at least 1 lowercase letter and at least one of the following special character !@#$%^&*"
     }
     res.push(feedback);
     return res;
@@ -73,7 +92,7 @@ const validatePassword = (password, res) => {
 const validateFirstName = (name, res) => {
     let feedback = "";
     let regexp = /^(\s*)$/;
-    if (name.length == 0 || regexp.test(name) == true) {
+    if (name.length === 0 || regexp.test(name) === true) {
         feedback = "Please enter a valid first name."
     }
     res.push(feedback);
@@ -83,7 +102,7 @@ const validateFirstName = (name, res) => {
 const validateEmail = (email, res) => {
     let feedback = "";
     let regexp = /^[A-Za-z0-9]+(\.)?[A-Za-z0-9]*@[A-Za-z0-9]+(\.)[A-Za-z]+$/;
-    if (regexp.test(email) == false) {
+    if (regexp.test(email) === false) {
         feedback = "Please enter a valid email address.";
     }    
     res.push(feedback);
@@ -92,7 +111,7 @@ const validateEmail = (email, res) => {
 const validateLastName = (name, res) => {
     let feedback = "";
     let regexp = /^(\s*)$/;
-    if (name.length == 0 || regexp.test(name) == true) {
+    if (name.length === 0 || regexp.test(name) === true) {
         feedback = "Please enter a valid last name."
     }
     res.push(feedback);
@@ -113,7 +132,7 @@ const validateComments = (comment, res) => {
 const validateAge = (age, res) => {
     let feedback = "";
     let regexp = /^(\s*|[0-9]+)$/;
-    if (regexp.test(age) == false) {
+    if (regexp.test(age) === false) {
       feedback = "Please enter a valid age";
     }
     res.push(feedback);

@@ -1,31 +1,162 @@
-import { useState } from "react";
-import { Button, Container, Table } from "react-bootstrap";
+import {useMemo, useState} from "react";
+import {Button, Container, Table} from "react-bootstrap";
 import fcts from "../Api";
-import { useLoaderData } from "react-router-dom";
-import { DataModal } from "../components/DataModal";
+import {Link, useLoaderData, useNavigate} from "react-router-dom";
+import {DataModal} from "../components/DataModal";
+import TableContainer from "../components/TableContainer";
+import {NumberColumnFilter, SelectColumnFilter} from "../components/Filter";
+// import "./NavPagesInformation.css";
 
-export const loadResultsFromDataBase = async() => {
+export const loadResultsFromDataBase = async () => {
     const results = await fcts.getResultsFromDataBase();
     return results;
 }
 
 const Data = () => {
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
+    const [sortConfig, setSortConfig] = useState({key: null, direction: null});
     const tmpData = useLoaderData();
     const dataId = tmpData.id;
+    console.log("IDSS:", dataId)
     const data = tmpData.data;
+    const navigate = useNavigate();
 
     const [showModal, setShowModal] = useState(false);
     const [modalInfo, setModalInfo] = useState('');
     const [modalId, setModalId] = useState('');
 
+    const columns = useMemo(
+        () => [
+            {
+                Header: 'Date & Time Completed',
+                accessor: 'dateAndTime',
+                Cell: ({cell}) => {
+                    const {value} = cell;
+                    const dateAndTime = (value) => {
+                        const date = value.split('|');
+                        return date[0];
+                    };
+                    return (
+                        <div>{dateAndTime(value)}</div>
+                    );
+                }
+            }, {
+                Header: 'Language',
+                accessor: 'language',
+                Filter: SelectColumnFilter,
+                filter: 'equals'
+
+            }, {
+                Header: 'Talker',
+                accessor: 'talker',
+                Filter: SelectColumnFilter,
+                filter: 'equals'
+
+            }, {
+                Header: 'List #',
+                accessor: 'list',
+                Filter: SelectColumnFilter,
+                filter: 'equals'
+            },
+            {
+                Header: 'Masker',
+                accessor: 'masker',
+                // Filter: SelectColumnFilter,
+                // filter: 'equals',
+                disableFilters: true,
+                Cell: ({cell}) => {
+                    const {value} = cell;
+                    return (
+                        <td className="w-50">{value}</td>
+                    )
+                }
+            },
+            {
+                Header: 'Mode',
+                accessor: 'mode',
+                // Filter: SelectColumnFilter,
+                // filter: 'equals'
+                disableFilters: true,
+                Cell: ({cell}) => {
+                    const {value} = cell;
+                    return (
+                        <td className="w-50">{value}</td>
+                    )
+                }
+            },
+            {
+                Header: 'Test Condition',
+                accessor: 'testEar',
+                Filter: SelectColumnFilter,
+                filter: 'equals'
+            },
+            {
+                Header: 'Scoring',
+                accessor: 'tripletType',
+                Filter: SelectColumnFilter,
+                filter: 'equals'
+            },
+            {
+                Header: 'Starting SNR',
+                accessor: 'startingSNR',
+                Filter: SelectColumnFilter,
+                filter: 'equals'
+            },
+            {
+                Header: 'Reversal',
+                accessor: 'adaptiveTest.reversals',
+                Filter: SelectColumnFilter,
+                filter: 'equals'
+            },
+            {
+                Header: 'SRT',
+                accessor: 'adaptiveTest.srt',
+            },
+            {
+                Header: 'St. Dev',
+                accessor: 'adaptiveTest.stDev',
+            },
+            {
+                Header: 'Overall Score',
+                accessor: 'score',
+                Cell: ({cell}) => {
+                    const {value} = cell;
+                    return (
+                        <td style={{maxWidth: "20px", width: "10px"}}>{value}</td>
+                    )
+                }
+            },
+            {
+                Header: 'Action',
+                accessor: '',
+                disableSortBy: true,
+                disableFilters: true,
+                Cell: ({cell}) => {
+                    return (
+                        <Button className="dataMenuBtn py-1 px-2" style={{fontSize: '14px'}}
+                                onClick={() => openModalData(cell.row)}>More</Button>
+                    )
+                }
+            }
+        ],
+        []
+    )
+
     const handleCloseModal = () => setShowModal(false);
     const handleShowModal = () => setShowModal(true);
-    
-    const openModalData = (e, key) => {
-        setModalInfo(e);
+
+    const openModalData = (e) => {
+        console.log("Modal to be openned with the following data:", e);
+        setModalInfo(e.original);
         handleShowModal()
-        setModalId(dataId[key]);
+        console.log("ID MODAL will be: ", e.id)
+        setModalId(dataId[e.id]);
+        // const id = dataId[e.id];
+        // navigate(`/data/${id}`)
+        // console.log("Modal to be openned with the following data:", e);
+        // setModalInfo(e.original);
+        // handleShowModal()
+        // console.log("ID MODAL will be: ", e.id)
+        // setModalId(dataId[e.id]);
     }
 
     // Sorting function based on column
@@ -35,7 +166,7 @@ const Data = () => {
             direction = 'descending';
         }
 
-        setSortConfig({ key, direction });
+        setSortConfig({key, direction});
     };
 
     const sortedData = [...data].sort((a, b) => {
@@ -47,10 +178,10 @@ const Data = () => {
             bValue = b.adaptiveTest.reversals;
         } else if (sortConfig.key === 'adaptiveTest.srt') {
             aValue = a.adaptiveTest.srt;
-            bValue = b.adaptiveTest.srt; 
+            bValue = b.adaptiveTest.srt;
         } else if (sortConfig.key === 'adaptiveTest.stDev') {
             aValue = a.adaptiveTest.stDev;
-            bValue = b.adaptiveTest.stDev; 
+            bValue = b.adaptiveTest.stDev;
         } else {
             aValue = a[sortConfig.key];
             bValue = b[sortConfig.key];
@@ -59,7 +190,7 @@ const Data = () => {
         if (aValue < bValue) {
             return sortConfig.direction === 'ascending' ? -1 : 1;
         }
-        
+
         if (aValue > bValue) {
             return sortConfig.direction === 'ascending' ? 1 : -1;
         }
@@ -68,91 +199,32 @@ const Data = () => {
 
     return (
         <>
-            <Container>
-                <h1 className="mt-3">Data</h1>
-                <Table className="table mx-auto table-bordered my-2 w-auto mb-5" responsive>
-                    <thead>
-                        <tr className="text-center">
-                            {/*<th colSpan={3} onClick={() => sortData('id')} style={{ cursor: 'pointer' }}>
-                                # {sortConfig.key === 'id' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th> */}
-                            <th colSpan={3} onClick={() => sortData('dateAndTime')} style={{ cursor: 'pointer' }}>
-                                Date & Time Completed {sortConfig.key === 'dateAndTime' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-                            <th onClick={() => sortData('language')} style={{ cursor: 'pointer' }}>
-                            Language {sortConfig.key === 'language' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-                            <th onClick={() => sortData('talker')} style={{ cursor: 'pointer' }}>
-                            Talker {sortConfig.key === 'talker' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
+            <Container id="testResultsDataContainer">
+                <h3 className="mt-3 fw-bold">Test Results Data</h3>
 
-                            <th onClick={() => sortData('list')} style={{ cursor: 'pointer' }}>
-                            List # {sortConfig.key === 'list' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
+                {/*<h1 className="mt-3">Test Results Data</h1>*/}
+                <TableContainer columns={columns} data={data}/>
 
-                            <th onClick={() => sortData('masker')} style={{ cursor: 'pointer' }}>
-                            Masker {sortConfig.key === 'masker' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-
-                            <th onClick={() => sortData('mode')} style={{ cursor: 'pointer' }}>
-                            Mode {sortConfig.key === 'mode' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-
-                            <th onClick={() => sortData('startingSNR')} style={{ cursor: 'pointer' }}>
-                            Starting SNR {sortConfig.key === 'startingSNR' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-
-                            <th onClick={() => sortData('adaptiveTest.reversals')} style={{ cursor: 'pointer' }}>
-                            Reversal {sortConfig.key === 'adaptiveTest.reversals' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-
-                            <th onClick={() => sortData('adaptiveTest.srt')} style={{ cursor: 'pointer' }}>
-                            SRT {sortConfig.key === 'adaptiveTest.srt' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-
-                            <th onClick={() => sortData('adaptiveTest.stDev')} style={{ cursor: 'pointer' }}>
-                            St. Dev {sortConfig.key === 'adaptiveTest.stDev' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-
-                            <th onClick={() => sortData('score')} style={{ cursor: 'pointer' }}>
-                            Overall Score {sortConfig.key === 'score' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : ''}
-                            </th>
-
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody> 
-                        {sortedData.map((data, key) => { 
-                            return (
-                                <tr key={key}>
-                                    {/* <td>{key + 1}</td> */}
-                                    <td colSpan={3}>{data.dateAndTime}</td>
-                                    <td>{data.language}</td>
-                                    <td>{data.talker}</td>
-                                    <td>{data.list}</td>
-                                    <td>{data.masker}</td>
-                                    <td>{data.mode}</td>
-                                    <td>{data.startingSNR}</td>
-                                    <td>{data.adaptiveTest.reversals}</td>
-                                    <td>{parseFloat(data.adaptiveTest.srt).toFixed(2)}</td>
-                                    <td>{parseFloat(data.adaptiveTest.stDev).toFixed(2)}</td>
-                                    <td>{data.score}</td>
-                                    <td><Button className="dataMenuBtn" onClick={() => openModalData(data, key)}>More</Button></td>
-                                    { modalInfo && 
-                                      showModal && 
-                                      modalId && 
-                                      <DataModal 
-                                        showModal={showModal} 
-                                        modalInfo={modalInfo} 
-                                        handleCloseModal={handleCloseModal} 
-                                        resultsId={modalId}
-                                      />
-                                    }
-                                </tr>
-                            )
-                        })}
-                    </tbody>
-                </Table>
+                {modalInfo &&
+                    showModal &&
+                    modalId &&
+                    <DataModal
+                        showModal={showModal}
+                        modalInfo={modalInfo}
+                        handleCloseModal={handleCloseModal}
+                        resultsId={modalId}
+                    />
+                }
+                {/*{modalInfo &&*/}
+                {/*    showModal &&*/}
+                {/*    modalId &&*/}
+                {/*    <Link*/}
+                {/*        showModal={showModal}*/}
+                {/*        modalInfo={modalInfo}*/}
+                {/*        handleCloseModal={handleCloseModal}*/}
+                {/*        resultsId={modalId}*/}
+                {/*    />*/}
+                {/*}*/}
             </Container>
         </>
     )

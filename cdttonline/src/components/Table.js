@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import DataTable from "react-data-table-component"
 
-function Table({correctAnswer, userAnswer, ixCurrentTriplet}) {
+function Table({correctAnswer, userAnswer, SNRarray}) {
 
     // const columns = [
     //     {
@@ -39,7 +39,7 @@ function Table({correctAnswer, userAnswer, ixCurrentTriplet}) {
                 <th style={{textAlign:"center"}}>Triplet #</th>
                 <th colSpan={3} style={{textAlign:"center"}}>Stimulus Digit</th>
                 <th colSpan={3} style={{textAlign:"center"}}>User Answer</th>
-
+                <th colSpan={3} style={{textAlign:"center"}}>SNR</th>
             </tr>
             {correctAnswer.map((val, id) => {
                 let tmpVal = val.split('');
@@ -57,6 +57,7 @@ function Table({correctAnswer, userAnswer, ixCurrentTriplet}) {
                                     <td>{tmpUserVal[0]}</td>
                                     <td>{tmpUserVal[1]}</td>
                                     <td>{tmpUserVal[2]}</td>
+                                    <td>{SNRarray[idx]}</td>
                                 </>
                             )
                         }
