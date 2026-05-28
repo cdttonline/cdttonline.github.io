@@ -1,0 +1,42 @@
+{
+  "test_results_data": {
+    "header": "Test Results Data",
+    "table_sorting": ["Showing", "Page", "of"],
+    "table_headers": ["Date", "Language", "Talker", "List", "Test Condition", "Scoring", "Starting SNR", "Reversal", "SRT", "St. Dev", "Participant ID", "Action"],
+    "btn_more": "More"
+  },
+  "test_results" : {
+    "modal_header": "Test Results",
+    "sub_headers": ["Results ID", "Participant ID", "Performed on"],
+    "basic_info": {
+      "header": "Basic Information"
+    },
+    "adaptive_result": {
+      "header": "Adaptive Results"
+    },
+    "subject_info": {
+      "header": "Subject Info"
+    },
+    "extended_results": {
+      "header": "Extended Results"
+    }
+  },
+  "btn": {
+    "edit": "Edit",
+    "print": "Print",
+    "cancel": "Cancel",
+    "update": "Update",
+    "export": "Export"
+  },
+  "form_placeholder": ["Search", "All"],
+  "undefined": "Undefined",
+  "test_parameters": {
+    "language": "Language",
+    "talker": "Talker",
+    "list": "List #",
+    "masker": "Masker",
+    "test_mode": "Test Mode",
+    "test_condition": "Test Condition",
+    "scoring": "Scoring"
+  }
+}

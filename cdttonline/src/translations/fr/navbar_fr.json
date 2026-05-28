@@ -1,0 +1,17 @@
+{
+  "about": "About",
+  "research_platform": "Research Platform",
+  "test": "Online Testing",
+  "contact": "Contacts",
+  "data_sub_title": {
+    "data": "Data",
+    "results": "Test Results",
+    "internal_calibration": "Internal Calibration"
+  },
+  "users": "Users",
+  "profile": "Profile",
+  "logout": "Logout",
+  "login": "Login",
+  "language": "FR",
+  "rights": "© 2025 Canadian Digit Triplet Test, <i>University of Ottawa.</i> All Rights Reserved."
+}

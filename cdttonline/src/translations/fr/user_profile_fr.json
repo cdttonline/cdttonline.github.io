@@ -1,0 +1,7 @@
+{
+  "title": "User Profile",
+  "labels": {
+    "new_pwd": "New Password",
+    "confirm_pwd": "Confirm New Password"
+  }
+}

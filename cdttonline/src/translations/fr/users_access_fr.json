@@ -1,0 +1,31 @@
+{
+  "title": "Users with Access",
+  "table": {
+    "email": "Email",
+    "name": "Name",
+    "last_name": "Last Name",
+    "type": "Type",
+    "date_added": "Date Added",
+    "added_by": "Added By",
+    "finished_register": "Finished Registering"
+  },
+  "actions": {
+    "add": {
+      "btn_title": "Add User",
+      "modal": {
+        "title": "Adding a new user",
+        "name": "Name",
+        "last_name": "Last Name",
+        "email": "Email",
+        "type": "Type",
+        "pwd": "Temporary Password",
+        "generate_pwd": "Geerate a password",
+        "btn": {
+          "cancel": "Cancel",
+          "add": "Add new User"
+        }
+      }
+    },
+    "remove": "Remove Access to a User"
+  }
+}

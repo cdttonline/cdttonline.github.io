@@ -1,0 +1,34 @@
+{
+  "section_1": {
+    "title": "Software and hardware considerations",
+    "paragraph_1": "The CDTT software was developed as a cross-platform Java application and it can be run on different operating systems (e.g., Windows, macOS).",
+    "bullet_pts": [
+      "The main interface provides controls for the test operator to enter participant information, select test parameters, run a test, and save the results in MS-Excel.",
+      "Participants enter their digit responses on-screen or using an external USB numeric keypad.",
+      "Use of an external USB sound card (e.g., E10K Olympus 2 by FiiO) is recommended for portability and reproducibility across computers.",
+      "Results have been found to be largely insensitive to the choice of earphones, but use of Radioear DD45 audiometric earphones is recommended for strict comparison to the ",
+      "Results obtained to date suggest that hearing screening with the CDTT can be administered with supra-aural earphones (Radioear DD45 or similar) on testing sites with background noise levels not exceeding 60 dBA, while the use of sound-attenuating circumaural earphones (Radioear DD450 or similar) should be considered on testing sites with background noise levels up to 75 dBA."
+    ],
+    "bullet_pts_4_link": "CDTT normative data"
+  },
+  "section_2": {
+    "title": "Software and hardware considerations",
+    "bullet_pts": [
+      "Testing languages: Canadian English and French (2016), Asante-Twi and Ghanaian English (2023)",
+      "Talkers: one or two talkers (male and female) per language/dialect",
+      "Digits: diotic (in-phase) or dichotic (antiphase) presentation",
+      "Maskers: Talker-specific speech spectrum noise (default) and user-defined noises",
+      "Test modes: Adaptative speech-recognition threshold search (SRT) or fixed signal-to-noise ratio (SNR)"
+    ]
+  },
+  "section_3": {
+    "title": "User manual (upcoming)"
+  },
+  "section_4": {
+    "title": "Video demonstration (upcoming)"
+  },
+  "section_5": {
+    "title": "Availability",
+    "paragraph_1": "Researchers can apply for a non-commercial software license for academic and research purposes. Please fill in <formLink>this form</formLink> and send by email to one of the <contactLink>Principal Investigators</contactLink>"
+  }
+}

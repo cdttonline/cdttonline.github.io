@@ -1,0 +1,30 @@
+{
+  "title": "Test Results",
+  "save_results": {
+    "title": "Save Results",
+    "question": "Do you allow your results to be saved anonymously for research purpose in the CDTT database?"
+  },
+  "saving_results": {
+    "title": "Saving Results",
+    "paragraph": "Please answer the following questions. Required fields are followed by *.",
+    "questions_box": {
+      "title": "Extra Questions (Optional)",
+      "age": "What is your age?",
+      "how_is_hearing": "How is your hearing?",
+      "one_ear_better": "Is one ear better than the other?",
+      "language_proficiency": "What is your level of language proficiency in English?",
+      "dominant_language": "What is your dominant language?",
+      "comments": "Any comments?",
+      "participant_id": "Enter your Participant ID if provided"
+    },
+    "terms_and_conditions": {
+      "title": "Terms and Conditions",
+      "checkbox_label": "I understand the results will be held anonymously."
+    }
+  },
+  "btn": {
+    "cancel": "Cancel",
+    "submit": "Submit Results",
+    "allow": "Allow"
+  }
+}

@@ -1,0 +1,202 @@
+const ValidateFn = {};
+
+const validateTestUserResults = (answer) => {
+    console.log("The answers to be validated are", answer);
+    let res = [];
+    for (let key in answer) {
+        if (key === "age") {
+            validateAge(answer[key], res);
+        } else if (key === "termsChecked") {
+            validateCheck(answer[key], res);
+        } else if (key === "comment") {
+            validateComments(answer[key], res);
+        } 
+    }
+    return res;
+}
+
+const validateNumberOfMissesInARow = (answer) => {
+    console.log("The answers to be validated are", answer);
+    let res = [];
+    for (let key in answer) {
+        if (key === "numOfMisses") {
+            console.log("passes in here")
+            validateNumMisses(answer[key], res);
+        }
+    }
+    return res;
+}
+
+
+const validatePwdChange = (answer) => {
+    let res = [];
+    for (let key in answer) {
+        if (key === "newPwd") {
+            validatePassword(answer[key], res);
+        } else if (key === "confirmNewPwd") {
+            validatePasswordConfirm(answer[key], answer["newPwd"], res);
+        }
+    }
+    return res;
+}
+
+
+const validateAddingUser = (answer) => {
+    console.log("The answers to be validated are", answer);
+    let res = [];
+    for (let key in answer) {
+        if (key === "firstName") {
+            validateFirstName(answer[key], res);
+        } else if (key === "lastName") {
+            validateLastName(answer[key], res);
+        } else if (key === "email") {
+            validateEmail(answer[key], res);
+        } 
+        else if (key === "password") {
+            validateTmpPwd(answer[key], res);
+        }
+    }
+    return res;
+}
+
+const validatePasswordConfirm = (confirmPwd, newPwd, res) => {
+    let feedback = "";
+    if (confirmPwd !== newPwd) {
+        feedback = "Your passwords don't match."
+    } 
+    res.push(feedback);
+    return res;
+}
+
+const validatePassword = (password, res) => {
+    let feedback = "";
+    // let regexp = /^[A-Za-z0-9]+$/;
+    const regexp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]+$/;
+    if ((password.length < 6) && regexp.test(password) === false) {
+        feedback = "Your password must contain more than 6 characters and have at least 1 digit, 1 lowercase letter and one of the following special character !@#$%^&*"
+    } else if (password.length < 6) {
+        feedback = "Your password must contain more than 6 characters."
+    } else if (password === "" || password === null) {
+        feedback = "Invalid password";
+    } else if (regexp.test(password) === false) {
+        feedback = "Your password must contain at least 1 digit, at least 1 lowercase letter and at least one of the following special character !@#$%^&*"
+    }
+    res.push(feedback);
+    return res;
+}
+
+const validateTmpPwd = (password, res) => {
+    let feedback = "";
+    // let regexp = /^[A-Za-z0-9]+$/;
+    const regexp = /^(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]+$/;
+    if ((password.length < 6) && regexp.test(password) === false) {
+        feedback = "empty"
+        // feedback = "Your password must contain more than 6 characters and have at least 1 digit, 1 lowercase letter and one of the following special character !@#$%^&*"
+    } else if (password.length < 6) {
+        feedback = "too_small"
+        // feedback = "Your password must contain more than 6 characters."
+    }
+    // else if (password === "" || password === null) {
+    //     feedback = "Invalid password";
+    //     feedback = "tmp_pwd.other"
+    // }
+    else if (regexp.test(password) === false) {
+        feedback = "other"
+        // feedback = "Your password must contain at least 1 digit, at least 1 lowercase letter and at least one of the following special character !@#$%^&*"
+    }
+    res.push(feedback);
+    return res;
+}
+
+const validateNumMisses = (misses, res) => {
+    let feedback = "";
+    let regexp = /^([2-9]|10)?$/;
+    if (misses.length === 0 || regexp.test(misses) === false || isNaN(misses) || misses < 1 || misses > 10) {
+        feedback = "Invalid number."
+    }
+    res.push(feedback);
+    return res;
+}
+
+
+const validateFirstName = (name, res) => {
+    let feedback = "";
+    let regexp = /^(\s*)$/;
+    if (name.length === 0 || regexp.test(name) === true) {
+        feedback = "name";
+    }
+    res.push(feedback);
+    return res;
+}
+
+const validateEmail = (email, res) => {
+    let feedback = "";
+    let regexp = /^[A-Za-z0-9]+(\.)?[A-Za-z0-9]*@[A-Za-z0-9]+(\.)[A-Za-z]+$/;
+    if (regexp.test(email) === false) {
+        feedback = "email"
+        // feedback = "Please enter a valid email address.";
+    }    
+    res.push(feedback);
+    return res;
+}
+const validateLastName = (name, res) => {
+    let feedback = "";
+    let regexp = /^(\s*)$/;
+    if (name.length === 0 || regexp.test(name) === true) {
+        feedback = "lastName"
+        // feedback = "Please enter a valid last name."
+    }
+    res.push(feedback);
+    return res;
+}
+
+
+const validateComments = (comment, res) => {
+    let feedback = "";
+    let limit = 350;
+    if (comment.length > limit) {
+      feedback = "Invalid comment. It needs to be 350 characters or less.";
+    }
+    res.push(feedback);
+    return res;
+}
+
+const validateAge = (age, res) => {
+    let feedback = "";
+    let regexp = /^(\s*|[0-9eE]+)$/;
+    console.log("age is: '" + age + "'" + " isNaN= " + isNaN(age) + "type of age=" + typeof age)
+    if (regexp.test(age) === false || isNaN(age) || age !== "" && (age < 1 || age > 150)) {
+        feedback = "Please provide a valid age.";
+    }
+    res.push(feedback);
+    return res;
+};
+
+const validateCheck = (check, res) => {
+    let feedback = "";
+    if (!check) {
+      feedback = "** Need to agree to the Terms and Conditions to submit results.";
+    }
+    res.push(feedback);
+    return res;
+};
+
+
+
+ValidateFn.validatePwdChange = (answer) => {
+    return validatePwdChange(answer);
+}
+
+ValidateFn.validateTestUserResults = (answer) => {
+    return validateTestUserResults(answer);
+};
+
+ValidateFn.validateNumberOfMissesInARow = (answer) => {
+    return validateNumberOfMissesInARow(answer);
+}
+
+ValidateFn.validateAddingUser = (answer) => {
+    return validateAddingUser(answer);
+}
+
+export default ValidateFn;

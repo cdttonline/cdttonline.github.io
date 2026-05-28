@@ -1,0 +1,29 @@
+{
+    "language": [ "EN_CA", "FR_CA", "EN_GH", "TWI_GH"],
+    "talker": ["female", "male"],
+    "list": ["01", "02", "03", "04"],
+    "masker": "SSNOISE",
+    "testMode": "adaptive",
+    "testEar": ["diotic", "antiphase"],
+    "tripletType": ["triplet", "all"],
+    "CALIB_FRAME_MASKER": "Masker volume is set to : ",
+    "LANGUAGE_PROFICIENCY": ["empty", "native", "advanced", "intermediate", "beginner"],
+    "HEARING_1": ["empty", "good", "fair", "poor"],
+    "HEARING_2": ["", "both", "left", "right"],
+    "navbar_title": {
+        "about": "À Propos",
+        "research_platform": "Platforme de recherche",
+        "test": "Test en ligne",
+        "contact": "Contacts",
+        "data_sub_title": {
+            "data": "Données",
+            "results": "Résultats des tests",
+            "internal_calibration": "Calibrations internes"
+        },
+        "users": "Utilisateurs",
+        "profile": "Profile",
+        "logout": "Déconnexion",
+        "login": "Connexion",
+        "language": "EN"
+    }
+}

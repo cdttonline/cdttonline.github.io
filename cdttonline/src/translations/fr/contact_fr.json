@@ -1,0 +1,29 @@
+{
+  "section_1": {
+    "title": "Principal investigators",
+    "contact_name": [
+      "Christian Giguère",
+      "Josée Lagacé",
+      "Kathleen Pichora-Fuller"
+    ],
+    "contact_email": [
+      "cgiguere@uottawa.ca",
+      "jlagace@uottawa.ca",
+      "k.pichora.fuller@utoronto.ca"
+    ],
+    "email": "Email"
+  },
+  "section_2": {
+    "title": "Software development",
+    "name": [
+      "Nicolas N. Ellaham",
+      "Mélina Rochon"
+    ]
+  },
+  "university": [
+    "University of Ottawa",
+    "University of Toronto Mississauga"
+  ],
+  "rights": "The rights to the Canadian Digit Triplet Test (CDTT) are owned by the University of Ottawa."
+
+}

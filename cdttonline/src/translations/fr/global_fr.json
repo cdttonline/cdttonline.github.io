@@ -1,0 +1,53 @@
+{
+  "internal_calibration": {
+    "title": "Données de calibration interne",
+    "label_num_misses_row": "Number of misses in a row",
+    "btn_save_num_misses_row": "Sauvegarder",
+    "btn_reset_num_misses_row": "Reset Number",
+    "label_type": "Type",
+    "btn_go": "Lancer",
+    "btn_edit": "Modifier les valeurs",
+    "btn_reset": "Réinitialiser {{type}} par défaut",
+    "btn_play_noise": "Jouer bruit",
+    "btn_stop_noise": "Arrêter bruit",
+    "modal": {
+      "title": "Calibration",
+      "body_1": "Please make sure to adjust your device's volume so that you can hear the noise without it being too loud.",
+      "body_2": "The current masker volume is set to : {{volume}}",
+      "btn_continue": "Continuer"
+    },
+    "btn_save": "Sauvegarder données",
+    "btn_cancel": "Annuler"
+  },
+  "test_results_data": {
+    "header": "Données des résultats des tests",
+    "table_sorting": ["Afficher", "Page", "de"],
+    "table_headers": ["Date", "Language", "Talker", "Liste", "Test Condition", "Scoring", "Starting SNR", "Reversal", "SRT", "St. Dev", "Participant ID", "Action"],
+    "btn_more": "Plus"
+  },
+  "test_results" : {
+    "modal_header": "Résultats du test",
+    "sub_headers": ["ID du résultat", "ID du participant", "Complété le"],
+    "basic_info": {
+      "header": "Information de base"
+    },
+    "adaptive_result": {
+      "header": "Adaptive Results"
+    },
+    "subject_info": {
+      "header": "Subject Info"
+    },
+    "extended_results": {
+      "header": "Extended Results"
+    }
+  },
+  "btn": {
+    "edit": "Modifier",
+    "print": "Imprimer",
+    "cancel": "Annuler",
+    "update": "Mettre à jour",
+    "export": "Exporter les données"
+  },
+  "form_placeholder": ["Recherche", "Tout"],
+  "undefined": "Indéfini"
+}

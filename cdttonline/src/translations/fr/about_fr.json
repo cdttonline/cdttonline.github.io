@@ -1,0 +1,18 @@
+{
+  "paragraph_1": "The Canadian Digit Triplet Test (CDTT) is a hearing screening tool developed by a team of researchers at the University of Ottawa and the University of Toronto. The test uses an adaptive procedure to determine the speech recognition threshold (SRT) for digit triplets in noise. The CDTT follows the guidelines of the International Collegium of Rehabilitative Audiology (<icraLink>ICRA</icraLink>) for the construction of <multilangualSpeechLink>multilingual speech tests</multilangualSpeechLink>.",
+  "link_title": [
+    "Feature article in Canadian Audiologist",
+    "Test development article in JASA Express Letters"
+  ],
+  "paragraph_2": {
+    "before_link_1": "The CDTT was first made available for testing in the two official languages of Canada, English and French, using digits from a bilingual male and a bilingual female presented in speech-spectrum noise. The test has been included in two large-scale multi-site national studies, the ",
+    "link_1_title": "Canadian Consortium on Neurodegeneration in Aging",
+    "between_link_1_and_link_2": " and the ",
+    "link_2_title": "Canadian Longitudinal Study on Aging",
+    "after_link_2": ", and made available to other researchers. Additional language modules have been developed in Asante-Twi and Ghanaian English."
+  },
+  "bullet_pts": [
+    "The <goToLink>plateforme de recherche</goToLink> is the most comprehensive version of the CDTT. It provides complete control over the test parameters and allows for the easy integration of new language/talker modules and additional user-defined noise maskers. Researchers can apply for a non-commercial software license for academic and research purposes.",
+    "An <goToLink>version en ligne</goToLink> is available for demonstration purposes."
+  ]
+}

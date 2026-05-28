@@ -1,0 +1,28 @@
+{
+  "title": "Internal Calibration Values",
+  "label": {
+    "num_misses_row": "Number of Misses in a Row",
+    "type": "Type"
+  },
+  "modal": {
+    "title": "Calibration",
+    "body_1": "Please make sure to adjust your device's volume so that you can hear the noise without it being too loud.",
+    "body_2": "The current masker volume is set to : {{volume}}"
+  },
+  "btn": {
+    "go": "Go",
+    "edit": "Edit Values",
+    "reset": "Reset {{type}} to Default",
+    "noise": {
+      "play": "Play Noise",
+      "stop": "Stop Noise"
+    },
+    "save": "Save Values",
+    "cancel": "Cancel",
+    "num_misses_row": {
+      "save": "Save",
+      "reset": "Reset Number"
+    },
+    "continue": "Continue"
+  }
+}
